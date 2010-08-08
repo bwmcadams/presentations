@@ -20,6 +20,9 @@
 \usepackage{xcolor}
 \usepackage{listings}
 
+\hypersetup{backref,  
+pdfpagemode=FullScreen,  
+colorlinks=false}
 
  % "define" Scala
 \lstdefinelanguage{Scala}{
@@ -183,7 +186,7 @@
 {
   \begin{frame}<beamer>
 	\frametitle{Outline}
-    \tableofcontents[currentsection,currentsubsection]
+    \tableofcontents[currentsection,currentsubsection,currentsubsubsection]
   \end{frame}
 }
 
@@ -331,8 +334,6 @@
 \item AutoSharding
 \end{itemizeframe}
 
-\section{Scala + MongoDB == Win}
-
 \subsection{MongoDB + Scala Drivers}
 
 \begin{itemizecodeframe}
@@ -362,13 +363,15 @@ Compare the previous with various Scala drivers.
 \end{itemize}
 \end{codeframe}
 
-\subsection{Interlude: Helping Scala + Java play nice together.}
+\section{Interlude: Helping Scala + Java play nice together.}
+
 \begin{itemizeframe}
     \frametitle{Helping Java + Scala Interact}
     \item Implicits, ``Pimp My Library'' and various conversion helper tools simplify the work of interacting with Java.
     \item<2-> Scala and Java have their own completely different collection libraries. 
     \item<3-> Some builtins ship with Scala to make this easier.
 \end{itemizeframe}
+\subsection{Java <-> Scala Basics}
 
 \begin{itemizeframe}
     \frametitle{Interoperability in Scala 2.7.x}
@@ -389,6 +392,7 @@ Compare the previous with various Scala drivers.
     \item<4-> Explicit \texttt{asJava} / \texttt{asScala} methods for conversions.  Adds \texttt{foreach} method to Java collections.
 \end{itemizecodeframe}
 
+\subsection{Implicits and Pimp Hats}
 \begin{itemizeframe}
     \frametitle{So WTF is an `Implicit', anyway?}
     \item Implicit Arguments
@@ -422,7 +426,116 @@ Compare the previous with various Scala drivers.
     \item<2-> Uses implicit conversions to tack on new methods at runtime.
     \item<3-> Either return a new ``Rich\_'' or anonymous class...
         \lstinputlisting{code/pimp_sample1.scala}
+    \item<3-> A note: with regards to type boundaries, \texttt{[A <: SomeType]} won't allow implicitly converted values.  You can whitelist them by using \texttt{[A <\% SomeType]} instead.
 \end{itemizeframe}
+\section{Scala + MongoDB == Win}
+\subsection{mongo-scala-driver}
+\subsubsection{Shapes for Object Mapping}
+
+\subsection{lift-mongo}
+\subsubsection{lift-mongo-record for Object Mapping}
+\subsubsection{Foursquare's approach to better querying}
+
+\subsection{casbah}
+\begin{itemizeframe}
+    \frametitle{Shameless Self Promotion}
+    \item Why Casbah?
+	\item     Background in pymongo + MongoKit 
+
+	\item     Java driver too... ``Java-ey''
+
+	\item     Didn't quite ``get'' scamongo and mongo-scala-driver early on
+
+	\item     scamongo's base didn't fix most of my issues w/ the Java Driver (just helped connection management)
+
+	\item     scamongo's ORM libraries were dependent on Lift (now scamongo is defunct and has become lift-mongo)
+
+	\item     mongo-scala-driver's shapes, etc were \emph{very} confusing to me as a newbie w/o much functional background
+
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Casbah is Born}
+    \item Borrowed bits I liked/understood from other places and built something that felt comfortable to me 
+    \item Early on, very pythonic
+    \item Query DSL, grown from wanting a feel close to the ``metal'' based on generic MongoDB knowledge
+    \item Heavily influenced in structure by \texttt{jorgeortiz85}'s libraries
+    \item Quickly grew as I used more and more MongoDB with Scala; features have been grown organically from my own needs.
+\end{itemizeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Interacting with DBObjects}
+    \item \texttt{DBObject} is far too structurally Java.
+    \item Sought to make them more usable \& readable from Scala
+    \item Most recently - match Scala 2.8 collection Factory/Builders
+    \item Implicit conversions of \texttt{Product} (base for Tuple), \texttt{Map}.  Explicit method \texttt{asDBObject} for corner cases.
+    \item `Pimped' version of \texttt{DBObject} via \texttt{MongoDBObject} - lets DBObject implement Scala's \texttt{Map} trait.
+        \lstinputlisting{code/casbah_dbobject_sample1.scala}
+    \item DBCollection behaves as a Scala \texttt{Iterable}, but interaction is mostly the same (with addition of methods like \texttt{+=}).
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Fluid Query Syntax}
+    \item My thought: Instead of keeping track of \textbf{Yet Another API}, MongoDB's Query Objects should ``just work''.
+    \item Two kinds of Query Operators - `Bareword' and `Core'.
+    \item Bareword Operators can be started as `bare' statements:
+        \lstinputlisting{code/casbah_bareword_ops1.scala}
+    \item Core Operators need to be anchored to the right of a \texttt{DBObject} or a String (typically representing a field name):
+        \lstinputlisting{code/casbah_core_ops1.scala}
+    \item Just a small taste - all MongoDB Query Objects are supported (For 1.4.x syntax - 1.6.x (\$or, etc. soon))
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Other Features}
+    \item Custom convertor implementations which allow most Scala types to be serialized cleanly to MongoDB.  (Joda time serialization/deserialization support).
+    \item Improved GridFS Functionality (loan pattern, support for \texttt{scala.io.Source})
+    \item Wrapper objects for Map/Reduce system (Help parse results to warn of errors, etc)
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Coming Soon}
+    \item Max Afonov {\scriptsize @max4f} working on annotation driven object mapping.
+    \item Investigating ActiveRecord implementation, with fluid query syntax support.
+    \item Support for MongoDB 1.6.x features.
+\end{itemizecodeframe}
+
+\subsection{STM + MongoDB via Akka}
+\begin{itemizecodeframe}
+    \frametitle{STM + MongoDB via Akka}
+    \item Akka has an implementation of STM inspired by Clojure's; allows datastructures such as Maps and Vectors to become transactional.
+    \item Akka STM supports persistence to several backends including MongoDB.
+    \item Allows you to setup relatively simple, code managed concurrent transactions with state stored safely in MongoDB.
+    \item Supports JTA; not yet distributed (Dependent on Multiverse, which is working on distributed STM)
+\end{itemizecodeframe}
+
+\section{Closing}
+\begin{itemizeframe}
+    \frametitle{Links}
+    \item mongo-scala-driver {\scriptsize http://github.com/alaz/mongo-scala-driver}
+    \item lift-mongo {\scriptsize http://www.assembla.com/wiki/show/liftweb/MongoDB}
+    \item FourSquare's Lift Mongo DSL Code ... coming soon? {\scriptsize @jliszka}
+    \item Casbah {\scriptsize http://novus.github.com/docs/casbah}
+    \item Jorge Ortiz' ({\scriptsize @jorgeortiz85}) Libraries
+        \begin{itemize}
+            \item scala-javautils (Scala 2.7.x) {\scriptsize http://github.com/jorgeortiz85/scala-javautils}
+            \item scalaj-collection (Scala 2.8.x) {\scriptsize http://github.com/scalaj/scalaj-collection}
+        \end{itemize}
+    \item This presentation {\scriptsize http://github.com/bwmcadams/presentations/tree/master/scala\_mongodb/scalany\_aug10/}
+\end{itemizeframe}
+
+
+\begin{itemizeframe}
+    \frametitle{Contact Info}
+    \item Twitter: {\scriptsize @rit}
+    \item Email: {\scriptsize bwmcadams@gmail.com}
+    \item Github: {\scriptsize http://github.com/bwmcadams} | {\scriptsize http://github.com/novus}
+    \item IRC - freenode.net \#mongodb
+    \item MongoDB Mailing List {\scriptsize http://groups.google.com/group/mongodb-user}
+    \item Casbah Mailing List {\scriptsize http://groups.google.com/group/mongodb-casbah-user}
+    \item Boston MongoDB Conference - Sept. 20 (Cambridge, Mass.) {\scriptsize http://10gen.com/conferences/mongoboston2010}
+    \item MongoDB NY Users Group {\scriptsize http://www.meetup.com/New-York-MongoDB-User-Group/}
+\end{itemizeframe}
+
 \end{document}
 
 
