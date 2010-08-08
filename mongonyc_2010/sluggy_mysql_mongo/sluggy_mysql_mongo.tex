@@ -1,0 +1,717 @@
+
+\documentclass{beamer}
+
+% Copyright 2010 by Brendan W. McAdams <bwmcadams@gmail.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+
+\mode<presentation>
+{
+  %\usetheme{nouvelle}
+  %\usetheme{Hannover}
+  \usetheme{Boadilla}
+  %\usetheme[pageofpages=of, % word b/w current and total page count
+  %          alternativetitlepage=true, % Fancy title page
+  %          titlepagelogo=mongodb-logo]{Torino}
+  %\usecolortheme{freewilly}
+  %          
+  %%          
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+
+
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{language=Python,captionpos=t,tabsize=3,keywordstyle=\color{blue},commentstyle=\color{darkgreen},stringstyle=\color{red},numbers=left,numberstyle=\tiny,numbersep=5pt,breaklines=true,showstringspaces=false,basicstyle=\scriptsize,emph={label}}
+
+
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[From MySQL to MongoDB at Sluggy.com] % (optional, use only with long paper titles)
+{From MySQL to MongoDB at Sluggy.com}
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[Brendan W. McAdams] 
+{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[Sluggy.com] % (optional, but mostly needed)
+{ Sluggy Freelance, LLC (sluggy.com) / Evil Monkey Labs, LLC. }
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date[Mongo NYC, May 2010] % (optional)
+{May 2010 / Mongo NYC}
+
+\subject{From MySQL to MongoDB at Sluggy.com}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+\logo{\includegraphics[width=1.5cm]{sluggy-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+	\frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Outline}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\section{Introduction}
+
+\subsection[About Sluggy.com]{Basic Rundown}
+\begin{frame}
+\frametitle{Sluggy.com Rundown}
+	\begin{itemize}
+		\item<2-> Live since August 25, 1997
+		\item<3-> Updated Every Day (even if it's just filler)
+		\item<4-> More Users == More Load
+		\item<5-> More Load == More Hardware
+		\item<6-> Advertising Revenues (e.g. Paying the Bills): \texttt{\tiny
+		 I tend to think of advertising as a finky spastic mentally retard cat who sometimes wants to jump in my lap and other times wants to hiss at me and run for the litterbox and often walks in circles trying to figure out which of the two it wants, followed by dropping dead with a final thought..."ohhh! food!"}
+		\item<7-> Not Google. Not Trying to {\em be} Google. Can't afford to think or scale like Google.
+		\item<8-> No dedicated staff or operations budget - advertising revenues cover server costs.  No ability to cover operations costs, downtime, bugs etc. (all of it means 3am wakeup).
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sluggy.com Rundown}
+\framesubtitle{Some Stats}
+	\begin{itemize}
+		\item ~50GB/day (1.5TB of traffic/month on a single virtual box)
+		\item 13 years of daily comics = 6500 image files (just for the comics)
+		\item Artist is frequently late in updating.  System has to handle random unexpected cache flushes \& data updates.
+		\item LUMP Stack (Lighttpd, Ubuntu, MongoDB \& Python)
+	\end{itemize}
+\end{frame}
+\subsection[About Sluggy.com]{Technology History}
+\begin{frame}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{1997 - 2000}
+	\begin{itemize}
+		\item August 25, 1997: Site Started - Static HTML generated via midnight cron executing Perl.  No dynamic content.  HTML Editing for news, navigation, etc.
+		\item File format requires globs: \texttt{\\000217a.gif\\000217b.gif\\000217c.gif} 
+		\item All make up the panels for February 17, 2000.  Artist likes \& understands this format.  Code looks for \texttt{yyMMdd*.(gif|jpg)} via glob and organizes them in order.
+		\item {\em 2000} - Original Developers split off and formed KeenSpot.com using same code \& navigation concepts.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{~2002}
+	\begin{itemize}
+		\item Rewrite Began using MySQL \& PHP to allow for ``No More HTML Editing''
+		\item Some Features: Dynamic headlines, news, predefined templates, dynamic navigation.  ``Members Only Club'' (behind the scenes features, sketches, etc)
+		\item {\em First Folly} - Reading MySQL and dynamically generating on each page request magnitudes harder than static HTML.  I/O DOS.
+		\item Moved to smarty template caching, generating on-disk cache file upon first request (expires at midnight)
+		\item Next 4 years became hellish with Midnight DOS' as everyone hit site and caches regenerated.
+	\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{~2006}
+	\begin{itemize}
+		\item Server move (For cost reasons) introduced new architecture problems
+		\item Perceived cost savings pushed a move from SCSI/SAS disks to SATA
+			\begin{itemize}
+				\item Between template files \& comic file globs.  Disks couldn't keep up.
+				\item Implemented {\bf memcached} to cache templates off-disk, in memory.  Cached glob results (but not files).  Cached anything else not likely to change - expiry set to a week (midnight for ``index'')
+				\item Sessions performed poorly in both disk and MySQL - caching in memcached helped.
+			\end{itemize}
+		\item Apache began crushing us on memory \& disk I/O.
+			\begin{itemize}
+				\item PHP isn't thread safe; requires forked Apache workers (children are {\em EXPENSIVE})
+				\item Migrated to Lighttpd + FastCGI - IO \& RAM usage of webserver \& PHP became negligible (Lots of tweaking of handling of static files esp. FAM)
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{2009}
+	\begin{itemize}
+		\item Rewrote the system in Pylons (Python + SQLAlchemy[MySQL])
+		\item Integrated {\bf Beaker} caching decorators (templates \& code blocks) - simplified adding caching code at need.
+		\item Clean ORM model, light \& fast with lots of caching.
+		\item Ran significantly better than on PHP - infinitely more tunable; sensible and sane.
+		\item {\bf memcached} continued to become a big, rickety crutch (cascading failure sucks)
+	\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{Aug. 3, 2009}
+	\begin{itemize}
+		\item Pylons system (v1.0) Live - with MySQL
+		\item Huge amounts of our code (as much as 80\%) was dedicated to converting UI Objects to and from Database objects. {\bf WTF?}
+		\item No more forks - Pylons \& Python run threaded. System resources were significantly less taxed by the presentation stack.
+	\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{Aug. 14, 2009}
+	\begin{itemize}
+		\item v1.10 Went Live - MySQL replaced by MongoDB (and MongoKit)
+		\item Easy Migration - MongoKit was quickly dropped in place and queries adjusted to new model (Stuck to MySQL schema as much as possible)
+		\item Maintained all bug fixes on MySQL branch for a few weeks ``just in case'' (never needed it)
+		\item Performance {\em vastly} improved.
+		\item Over next few months, built tools to use MongoDB in place of {\bf memcached} for caching ({\bf mongodb\_beaker})
+		\item {\em LAMP} replaced by {\bf LUMP} (Lighttpd, Ubuntu, MongoDB \& Python)
+		\item A few things left in {\bf memcached} through a combination of ``makes sense there'' and indolence (open debt task to migrate much of the rest)
+	\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{Sept. 2009}
+	\begin{itemize}
+		\item MongoDB completely removed our need for Physical hardware - migrated to Virtual hosting ({\em slicehost})
+		\item Average system load is {\em ~0.05} on a 2G slice.
+		\item MongoDB uses {\em ~1\%} of CPU on average.
+		\item Switchover took ~2 minutes (ran data conversion script, deployed new code tag, bounced webserver / pylons app)
+		\item No downtime in any way attributable to MongoDB since go live (Can't say the same for MySQL)
+	\end{itemize}
+\end{frame}
+
+\section{What We Learned}
+\subsection[Lessons Learned]{Lessons Learned Over Time}
+
+\begin{frame}
+\frametitle{memcached is a crutch\dots}
+\framesubtitle{meant to make up for RDBMS' shortfalls}
+	\begin{itemize}
+		\item {\bf memcached} can be great for things you can afford to lose.
+		\item<2-> It's not just about what you ``can't afford to lose''. Beware of cascading failures. 
+		\item<3-> Over reliance can cause self-DOS after a crash, reboot, accidental flush (even of just one keyset), etc)
+		\item<4-> See {\em Coders at Work} (Siebel) for a great runthrough of what led to memcached's creation.
+	\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{as long as we're being hyperbolic\dots}
+\framesubtitle{mongodb is a bionic leg replacement\dots}
+	\begin{itemize}
+		\item MongoDB's MMAP system gives you a ``free'' MRU cache. Done right and simple; caching on MongoDB is durable, light and fast. 
+		\item<2-> No piles of special code to track between what is and isn't in your cache and stuff it in there.
+		\item<3-> If it falls out of memory cache, it is persisted to disk.  
+		\item<4-> But\dots Don't build your MongoDB system like a MySQL system (it'll work, but you'll lose speed and flexibility)
+			\begin{itemize}
+				\item<5-> DBRefs should be used sparingly - favor embedded objects (don't be afraid to denormalize and duplicate data); autorefs can be even worse as there's a performance penalty imposed.
+				\item<6-> Flexible schemas are good.
+				\item<7-> Wasting your time mapping data back and forth between your presentation layer \& RDBMS is not just tedious - it's error prone.
+				\item<8-> The more you can put in memory, the less you beat on your disks. Especially important on virtual hosting: Be a Good Neighbor
+				\item<8-> MongoDB is very good at automatically memory caching frequently used data, reducing the amount of code you need to write.
+			\end{itemize}
+		\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Caveats}
+\begin{itemize}
+	
+	\item While there is a lot ``wrong'' with our first pass implementation, MongoDB has been consistent and most importantly: {\em forgiving}.
+	\item {\em Someone} has to enforce a consistent schema - if it's not your datastore (like a RDBMS does) then your code or ops people (or both) have to.
+
+\end{itemize}
+\end{frame}
+
+\subsection[Code Produced]{Open Source Code Yielded}
+
+\begin{frame}[fragile]
+\frametitle{Open Source Code}
+\framesubtitle{mongodb\_beaker: Beaker Caching for MongoDB}
+\begin{itemize}
+	\item Open Source caching plugin for the Python Beaker stack.  
+	\item Uses distutils plugin entry points.
+	\item<2-> Switching from {\bf memcached} to Beaker + MongoDB required a 2 line config file change:
+	\begin{lstlisting}
+- beaker.session.type = libmemcached
+- beaker.session.url = 127.0.0.1:11211
++ beaker.session.type = mongodb
++ beaker.session.url = mongodb://localhost:27017/emergencyPants#sessions
+	\end{lstlisting}
+	\item<3-> Lots of useful options in MongoDB Beaker
+	\item<3-> A few limitations on the beaker side which need changes in Beaker (manipulable cache data)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Open Source Code}
+\framesubtitle{MongoKit-Pylons: Pylons patches for Python MongORM}
+\begin{itemize}
+	\item Added support to MongoKit to run within a Pylons environment (threadlocal setup of connection pool)
+	\item<2-> Adding a globally available thread safe connection pool to Pylon was simple. Add 2 lines to config/environment.py:
+\begin{lstlisting}
+from mongokit.ext.pylons_env import MongoPylonsEnv
+MongoPylonsEnv.init_mongo()	
+\end{lstlisting}
+	\item Added a few other features to simplify SQLAlchemy migration
+	\item<4-> {\em setattr} / {\em getattr} support to allow {\bf mongoDoc.{\em field}} instead of the dict interface ({\bf mongoDoc['{\em field}']})
+	\item<5-> DB Authentication
+	\item<6-> A few missing corners such as additional datatypes, enhanced index definitions on-document, group statement shortcuts, etc.
+	\item<7-> Integrated support for autoreferences (which was/are a bad idea)
+	\item<8-> Changes merged into MongoKit Trunk (GREAT unit test coverage)
+\end{itemize}
+\end{frame}
+
+
+\subsection[Why MongoDB?]{Why MongoDB?}
+
+\begin{frame}
+\frametitle{Why MongoDB?}
+	\begin{itemize}
+		\item Dynamic Querying
+		\item Flexibility
+		\item<2-> CouchDB's approach appeared obtused and rather unPythonic
+		\item<3-> Tools like MongoKit allowed for easy replacement of existing MySQL ORM code with something almost identical
+		\item FAST
+		\item Great Support \& Community Available
+		\item<4-> MongoDB Mailing List
+		\item<5-> IRC: freenode.net \#mongodb
+		\item<6-> Easy access - talking to developers NOT support staff. One official development company behind MongoDB.
+		\item Shiny
+	\end{itemize}
+\end{frame}
+
+\section{Show Me The Code}
+\subsection[The Old: MySQL Snippets]{The Old: MySQL Snippets}
+
+\begin{frame}[fragile]
+\frametitle{MySQL Schema Snippets}
+\framesubtitle{The Admin Table...}
+\begin{lstlisting}
+CREATE TABLE `admin_users` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `username` varchar(45) collate latin1_general_ci NOT NULL default '',
+  `password` char(32) collate latin1_general_ci NOT NULL,
+  `display_name` varchar(64) collate latin1_general_ci default NULL,
+  `email` varchar(255) collate latin1_general_ci NOT NULL default '',
+  `avatar` varchar(255) collate latin1_general_ci default NULL,
+  `last_ip` int(10) unsigned default NULL,
+  `last_login_date` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `disabled` tinyint(1) default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `UNIQUE` (`username`),
+  UNIQUE KEY `admin_users_uniq` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci PACK_KEYS=1;
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{MySQL Schema Snippets}
+\framesubtitle{The News Table...}
+\begin{lstlisting}
+CREATE TABLE `news` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `author_id` int(11) unsigned NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date default NULL,
+  `headline` varchar(255) NOT NULL,
+  `story` text NOT NULL,
+  `archive` tinyint(1) default '0',
+  PRIMARY KEY  (`id`),
+  KEY `news_author` (`author_id`),
+  CONSTRAINT `news_author` FOREIGN KEY (`author_id`) REFERENCES `admin_users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=latin1;
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{SQLAlchemy Model}
+\framesubtitle{The Admin Object}
+\begin{lstlisting}
+class AdminUser(ORMObject):
+    pass
+
+t_admin_users = Table('admin_users', meta.metadata,
+    Column('id', Integer, primary_key=True),
+    Column('username', Unicode(45), nullable=False, unique=True),
+    Column('password', Unicode(32), nullable=False),
+    Column('display_name', Unicode(64)), # Should be unique?   
+    Column('email', Unicode(255), nullable=False, unique=True),
+    Column('last_ip', IPV4Address, nullable=True),
+    Column('last_login_date', MSTimeStamp, nullable=False),
+    Column('avatar', Unicode(255), nullable=True),
+    Column('disabled', Boolean, default=False),
+    mysql_engine='InnoDB'
+)
+
+mapper(AdminUser, t_admin_users)
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{SQLAlchemy Model}
+\framesubtitle{The News Object}
+\begin{lstlisting}
+class NewsStory(ORMObject):
+    pass
+
+t_news = Table('news', meta.metadata,
+    Column('id', Integer, primary_key=True),
+    Column('author_id', Integer, ForeignKey('admin_users.id'), nullable=False),
+    Column('start_date', Date, nullable=False),
+    Column('end_date', Date),
+    Column('headline', Unicode(255), nullable=False),
+    Column('story', Unicode, nullable=False),
+    Column('archive', Boolean, default=False),
+    mysql_engine='InnoDB'
+)
+
+mapper(NewsStory, t_news, properties={
+    'author': relation(AdminUser, backref='news_stories')
+})
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{SQLAlchemy Model}
+\framesubtitle{Paypal: OH THE HORROR}
+\begin{lstlisting}
+class PaypalIPN(ORMObject):
+    pass
+
+
+t_paypal_ipn = Table('paypal_ipn', meta.metadata,
+    Column('id', Integer, primary_key=True),
+    Column('first_name', Unicode(64)),
+    Column('last_name', Unicode(64)),
+    Column('payer_business_name', Unicode(127)),
+    Column('payer_email', Unicode(127)),
+    Column('payer_id', Unicode(13)),
+    Column('payer_status', Unicode(10)),
+    Column('residence_country', Unicode(2)),
+    Column('business', Unicode(127)),
+    Column('receiver_email', Unicode(127)),
+    Column('receiver_id', Unicode(13)),
+    Column('item_name', Unicode(127)),
+    Column('item_number', Unicode(127)),
+    Column('quantity', Integer),
+    Column('payment_date', Unicode(127)),
+    Column('payment_status', Unicode(20)),
+    Column('payment_type', Unicode(10)),
+    Column('pending_reason', Unicode(20)),
+    Column('reason_code', Unicode(20)),
+    Column('mc_currency', Unicode(127)),
+    Column('mc_fee', Unicode(127)),
+    Column('mc_gross', Unicode(127)),
+    Column('txn_id', Unicode(17)),
+    Column('address_name', Unicode(255)),
+    Column('address_street', Unicode(255)),
+    Column('address_city', Unicode(255)),
+    Column('address_state', Unicode(255)),
+    Column('address_zip', Unicode(255)),
+    Column('address_country', Unicode(255)),
+    Column('address_country_code', Unicode(255)),
+    Column('address_status', Unicode(15)),
+    Column('notes', Unicode(255), nullable=True),
+    mysql_engine='InnoDB'
+)
+
+mapper(PaypalIPN, t_paypal_ipn)
+
+\end{lstlisting}
+\end{frame}
+
+
+% \begin{frame}[fragile]
+% \frametitle{MongoKit Model}
+% \framesubtitle{Search \& Helper Snippets}
+% \begin{lstlisting}
+% def one_by_date(cls, where, date, start_date_field="start_date",
+%  				end_date_field="end_date", allow_null_end=True):
+%     results = all_by_date_range(cls, where, date, date)
+% 
+%     if results.count() != 1:
+%         #raise MultipleResultsFound("Didn't find exactly one result.  (Answer was 
+% %d)" % results.count())        return None
+%     else:        return results.next()
+% \end{lstlisting}
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+% \frametitle{MongoKit Model}
+% \framesubtitle{Search \& Helper Snippets}
+% \begin{lstlisting}
+% def all_by_date_range(cls, where, start_date_value, end_date_value=TODAY, 
+% 					  start_date_field="start_date", 
+% 					  end_date_field="end_date", sort_by="start_date",
+% 					   sort_dir=INDEX_DESCENDING,  allow_null_end=True):
+%     """ 
+%     Simplifies (as far as DRY goes) calling a search in MongoKit
+%     regarding a date range search.
+%     """
+%     where[start_date_field] = {'$lte': start_date_value}
+%     js_where = 'this.%s >= new Date("%s")' % (end_date_field, 
+%                                               end_date_value.ctime())
+%     if allow_null_end:
+%         js_where += ' || this.%s == null' % end_date_field
+% 
+%     log.debug("Searching daterange on %s from %s to %s with where clause: %s" % 
+%         (cls, start_date_value, js_where, where))
+%     log.debug("Sort By: %s Sort Dir: %s" % (sort_by, sort_dir))
+%     return cls.all(where).where(js_where).sort(sort_by, sort_dir)
+% \end{lstlisting}
+% \end{frame}
+% 
+\begin{frame}[fragile]
+\frametitle{MongoKit Model}
+\framesubtitle{Admin}
+\begin{lstlisting}
+class AdminUser(MongoPylonsDocument):
+    use_autorefs = True
+    use_dot_notation = True
+    collection_name = 'admin_users'
+    structure = {
+        'username': unicode, # unique
+        'password': unicode,
+        'display_name': unicode,
+        'email': unicode,
+        'last_ip': unicode,
+        'last_login_date': datetime.datetime,
+        'avatar': unicode,
+        'disabled': bool,
+    }
+
+    required_fields = ['username', 'password', 'email']
+    default_values = {'disabled': False, 'last_login_date': datetime.datetime.now()}
+
+    indexes = [
+	    {
+	     'fields': ['username', 'password'],
+	     'ttl': 86400
+	    },
+        {
+         'fields': ['password'],
+         'ttl': 86400
+        }
+    ]
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{MongoKit Model}
+\framesubtitle{Admin}
+\begin{lstlisting}
+class NewsStory(MongoPylonsDocument):
+    use_dot_notation = True
+    use_autorefs = True
+    collection_name = 'news'
+    structure = {
+        'author': AdminUser,
+        'headline': unicode,
+        'story': unicode,
+        'start_date': datetime.datetime,
+        'end_date': datetime.datetime,
+        'archived': bool # default false
+    }
+
+    required_fields = ['author', 'headline', 'story', 'start_date']
+    default_values = {
+      'start_date': TODAY,
+      'archived': False,
+    }
+
+    indexes = [
+	    {
+	        'fields': ['start_date', 'end_date'],
+	        'ttl': 86400,
+	    },        
+		{
+            'fields': 'archived',
+            'ttl': 86400,
+        }
+    ]
+
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{MongoKit Model}
+\framesubtitle{PayPal: OH THE\dots that's not so bad.}
+\begin{lstlisting}
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{MongoKit Model}
+\framesubtitle{PayPal: ``Instead''}
+\begin{lstlisting}
+ipn_db = None
+try:
+    dbh = MongoPylonsEnv.mongo_conn()\
+        [MongoPylonsEnv.get_default_db()]['defenders_paypal_ipn']
+    ipn_id = dbh.insert(dict(request.POST.items()), safe=True)
+    ipn_db = dbh.find_one({'_id': ipn_id})
+    if not ipn_db:
+        raise Exception('could not lookup, post-insert')
+except Exception, e:
+    log.exception("Paypal IPN Error: Unable to commit IPN data to "
+                  " Database: %s " % repr(e))
+    raise DefendersIPNException(repr(e))
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{MySQL -> Mongo Migration}
+\framesubtitle{Admin Migration}
+\begin{lstlisting}
+db = mongoModel.AdminUser._get_connection()
+conn = db.connection()
+conn.drop_database('emergencyPants')
+
+admins = {}
+for user in meta.Session.query(AdminUser).all():
+    _admin = mongoModel.AdminUser(doc={
+        'username': user.username,
+        'password': user.password,
+        'avatar': user.avatar,
+        'disabled': user.disabled,
+        'display_name': user.display_name,
+        'email': user.email,
+        'last_ip': unicode(user.last_ip),
+        'last_login_date': user.last_login_date,
+    }).save()
+    admins[user.id] = _admin
+
+mongoModel.AdminUser.get_collection().ensure_index('password',
+ 		 	direction=ASCENDING, unique=True)
+mongoModel.AdminUser.get_collection().ensure_index(
+			[('username', ASCENDING), 
+			('password', ASCENDING)]) 
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{MySQL -> Mongo Migration}
+\framesubtitle{News Migration}
+\begin{lstlisting}
+print "Importing News Stories."
+for story in meta.Session.query(NewsStory).all():
+    #pprint("\tFound a story: %s" % story)
+    _story = mongoModel.NewsStory(doc={
+        'author': admins[story.author_id],
+        'headline': story.headline,
+        'story': story.story,
+        'start_date': convert_date(story.start_date),
+        'end_date': convert_date(story.end_date),
+        'archived': story.archive
+    }).save()
+    #pprint("\t Mongo News Story: %s" % _story)
+
+print "Setting up news story indices."
+mongoModel.NewsStory.get_collection().\
+    ensure_index('archived', direction=ASCENDING)
+mongoModel.NewsStory.get_collection().\
+    ensure_index([('start_date', ASCENDING), 
+				  ('end_date', ASCENDING)])
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Looking for news}
+\framesubtitle{In Mongo\dots}
+\begin{lstlisting}
+def _get_news(date):
+    news = NewsStory.all({
+        'archived': False,
+        'start_date': {'$lte': c._today}
+    }).where('this.end_date == null || this.end_date >= new Date()').\
+       sort('start_date', -1) 
+    
+    return news
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Looking for news}
+\framesubtitle{The old MySQL/SQLAlchemy way\dots}
+\begin{lstlisting}
+ def _get_news(date):
+    news = meta.Session.query(NewsStory).\
+       filter(and_(NewsStory.archive==False, NewsStory.start_date<=date,
+              or_(NewsStory.end_date==None, NewsStory.end_date>date)))\
+              .order_by(NewsStory.start_date.desc()).all()
+	return news
+\end{lstlisting}
+\end{frame}
+
+\section{Final Items}
+
+\begin{frame}
+\frametitle{MongoKit}
+\framesubtitle{Upcoming Features}
+\begin{itemize}
+	\item update validation. This feature would allow to validate the update query in order to match the structure. I have to think carefully about it to not miss something. 
+	\item migrate to the new gridfs implementation (won't break the API). 
+	\item locked field support : field that cannot be changed once set. This is usefull for slug fields or \_id. 
+	\item fixtures support : ability to generate on the fly documents which values match the structure. 
+	\item rdf support : like the ``to\_json'' method but generate a valid rdf document. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Questions?}
+\framesubtitle{Contact Info}
+    \begin{itemize}
+        \item Contact Me
+        \begin{itemize}
+            \item twitter: {\bf @rit}
+            \item email: {\bf bwmcadams@gmail.com}	
+			\item bitbucket: \url{http://hg.evilmonkeylabs.net}
+        \end{itemize}
+        \item Pressing Questions?
+        \begin{itemize}
+            \item IRC - {freenode.net \bf\#mongodb}
+            \item MongoDB Users List - \url{http://groups.google.com/group/mongodb-user}
+        \end{itemize}
+    \item Mongo Python Language Center - \url{http://api.mongodb.org/python/1.6\%2B/index.html} {(\tiny Links to Java driver docs, and many of the third party libraries. Pythonic!)}
+        \item MongoKit - \url{http://bitbucket.org/namlook/mongokit/wiki/Home}
+        \item Pylons -\url{http://pylonshq.com}
+    \end{itemize}
+\end{frame}
+\end{document}

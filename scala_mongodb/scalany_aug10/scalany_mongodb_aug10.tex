@@ -1,0 +1,428 @@
+\documentclass{beamer}
+
+% Copyright 2010 by Brendan W. McAdams <bwmcadams@gmail.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+
+\mode<presentation>
+{
+  % \usetheme{Dresden}      
+  \usetheme{CambridgeUS}      
+  \usecolortheme{seahorse}
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+
+ % "define" Scala
+\lstdefinelanguage{Scala}{
+   morekeywords={abstract,case,catch,class,def,%
+     do,else,extends,false,final,finally,%
+     for,forSome,if,implicit,import,lazy,%
+     match,mixin,%
+     new,null,object,override,package,%
+     private,protected,requires,return,sealed,%
+     super,this,throw,trait,true,try,%
+     type,val,var,while,with,yield},
+   otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+   sensitive=true,
+   morecomment=[l]{//},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   morestring=[b]',
+   morestring=[b]"""
+ }
+
+
+ \lstdefinelanguage{JavaScript}{
+    keywords={attributes, class, classend, do, empty, endif, endwhile, fail, function, functionend, if, implements, in, inherit, inout, not, of, operations, out, return, set, then, types, while, use},
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={},
+    ndkeywordstyle=\color{yellow}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    commentstyle=\color{green}\ttfamily,
+    stringstyle=\color{red}\ttfamily
+ }
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+ 
+% Default settings for code listings
+\lstset{
+  frame=tb,%
+  language=Scala,%
+  aboveskip=3mm,%
+  belowskip=3mm,%
+  xleftmargin=4mm,%
+  showstringspaces=false,%
+  keepspaces=true,%
+  columns=[c]fixed,%
+  basicstyle={\tiny\ttfamily},%
+  escapechar=¤,%
+  numbers=none,%
+  numberstyle=\tiny\color{gray},%
+  keywordstyle=\color{blue},%
+  commentstyle=\color{dkgreen},%
+  stringstyle=\color{mauve},%
+  frame=single,%
+  breaklines=true,%
+  breakatwhitespace=true,%
+  tabsize=2,%
+  firstnumber=0,%
+  numbersep=1.5mm,%
+  numberstyle=\tiny%
+}
+
+% \lstdefinestyle{floating}{%
+%     xleftmargin=10pt,%
+%     xrightmargin=5pt,%
+%     aboveskip=4mm,%
+%     belowskip=4mm,%
+%     fontadjust=true,%
+%     columns=[c]flexible,%
+%     keepspaces=true,%
+%     basewidth={0.5em, 0.425em},%
+%     tabsize=2,%
+%     basicstyle=\renewcommand{\baselinestretch}{0.95}\ttfamily,%
+%     commentstyle=\rm,%
+%     keywordstyle=\bfseries,%
+%     mathescape=true,%
+%     captionpos=b,%
+%     framerule=0.3pt,%
+%     firstnumber=0,%
+%     numbersep=1.5mm,%
+%     numberstyle=\tiny,%
+%     float=tbp,%
+%     frame=tblr,%
+%     framesep=5pt,%
+%     framexleftmargin=3pt,%
+%     abovecaptionskip=\smallskipamount,%
+%     belowcaptionskip=\smallskipamount,%
+% } % to define: caption, label
+
+\newcommand{\code}[1]{%
+    \lstinline[%keywordstyle=,%
+               flexiblecolumns=true,%
+               basicstyle=\ttfamily]£#1£}
+
+\newenvironment{itemizeframe}
+               {\begin{frame}\startitemizeframe} 
+               {\stopitemizeframe\end{frame}}
+              
+\newenvironment{codeframe}
+                {\begin{frame}[allowframebreaks,allowdisplaybreaks]}
+                {\end{frame}}
+                
+\newenvironment{itemizecodeframe}
+              {\begin{frame}[allowframebreaks,allowdisplaybreaks]
+              \startitemizeframe} 
+              {\stopitemizeframe\end{frame}}
+
+\newcommand\startitemizeframe{\begin{itemize}} \newcommand\stopitemizeframe{\end{itemize}}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Integrating Scala + MongoDB]{Scala with MongoDB} % (optional, use only with long paper titles)
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[B.W. McAdams]{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[Novus Partners]{Novus Partners, Inc.}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date[NY Scala Enthusiasts - 8/8/10]
+     {New York Scala Enthusiasts\\ Aug. 8, 2010}
+
+\subject{Using Scala with MongoDB}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+\logo{\includegraphics[width=1.25cm]{novus-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+	\frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Outline}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\section{Introduction}
+\subsection{Exposition}
+
+\begin{itemizeframe}
+\frametitle{Who Am I?}
+    \item Started in Perl - lots of MySQL + Sybase (some PostgreSQL + Oracle)
+	\item Spent time in C, PHP, Java, Python, C\#
+	\item Built a bond trading platform with Perl and Java
+	\item Last few years - lots of Python
+	\item Last year - IronPython, C\#, MongoDB... 
+	\item Research into NoSQL Tools led to MongoDB
+\end{itemizeframe}
+
+
+\begin{itemizeframe}
+\frametitle{Briefly - Sluggy.com Rundown}
+    \item I've maintained systems (and some code) for Sluggy.com since ~1999
+    \item Original system was Perl + FreeBSD (flat files)
+    \item Eventually migrated to Linux + PHP w/ MySQL
+    \item Last Year: Rewrote with Python (Pylons) + MongoDB (pymongo + MongoKit), went live ~1 year ago.
+    \item With Mongo, serving ~50GB/day (1.5TB of traffic/month on a single slicehost virtual machine)
+    \item Opened my eyes to the new world of NoSQL
+    \item See my talk from MongoNYC 2010 on our migration + what was learned
+\end{itemizeframe}
+
+\begin{itemizeframe}
+\frametitle{Current Gig}
+    \item Started at Novus Partners last fall
+    \item Was toying with Scala while looking for work
+    \item Dove into first project with Scala - haven't looked back.
+    \item Existing Java development team now working in Scala
+    \item Just expanded development team to another Scala developer
+    \item Introduced MongoDB for rapid \& flexible data interaction for frontend.
+    \item Several Open Source packages yielded...
+        \begin{itemize}
+            \item Casbah (mongoDB + Scala driver layer)
+            \item Luau (mongoDB + Hadoop integration, written in Scala)
+        \end{itemize}
+\end{itemizeframe}
+
+\subsection{What is MongoDB?}
+
+\begin{itemizeframe}
+\frametitle{Introducing MongoDB}
+    \item Categorized as a ``Document-Oriented Database''
+        \begin{itemize}
+            \item<2-> Features of both Key-Value Stores \& RDBMS'
+            \item<2-> Rich query interface.
+            \item<2-> Works with JSON-like Documents
+            \item<2-> Favors embedding related data over ``foreign key'' relationships
+        \end{itemize}
+    \item<3-> Free license (A-GPL) cross-platform (Packages for Linux, Windows, Mac OS X, Windows, FreeBSD \& Solaris)
+    \item<4-> Cursor-based query results 
+    \item<5-> Serverside Javascript
+        \begin{itemize}
+            \item<5-> Stored Javascript functions server-side
+            \item<5-> Powerful aggregation - Map/Reduce, Group Commands
+            \item<5-> JS Statements in queries (no indexes though)
+        \end{itemize}
+    \item<6-> Indexing system is much like RDBMS, includes Geospatial support.
+    \item<7-> Scalable file storage with GridFS
+    \item<8-> Data scalability with Replica Sets \& Autosharding
+\end{itemizeframe}
+\begin{itemizeframe}
+\frametitle{Programming with MongoDB}
+\item Provides a native API which allows interaction to adapt to the programming language (rather than vice versa).
+\item<2-> Official drivers for...
+    \begin{itemize}
+        \item<2-> C
+        \item<2-> C++
+        \item<2-> Java
+        \item<2-> JavaScript
+        \item<2-> Perl
+        \item<2-> PHP
+        \item<2-> Python
+        \item<2-> Ruby
+    \end{itemize}
+\item<3-> Community supported drivers include...
+    \begin{itemize}
+        \item<3-> .Net: C\# \& F\#
+        \item<3-> JVM: Clojure, Scala, Groovy
+        \item<3-> Erlang
+        \item<3-> Haskell
+        \item<3-> Go 
+        \item<3-> ... and many more.
+    \end{itemize}
+\end{itemizeframe}
+\begin{frame}
+\frametitle{But is anyone actually *using* it?!?}
+    MongoDB is deployed in production at companies including...
+    \begin{itemize}
+        \item New York Times 
+        \item Foursquare 
+        \item bit.ly 
+        \item SourceForge
+        \item Etsy 
+        \item Disqus
+        \item Github\pause
+        \item ... The Large Hadron Collider.  
+    \end{itemize}
+\end{frame}
+
+\subsection{A Taste of MongoDB}
+
+\begin{frame}
+\frametitle{The basics of Querying}
+\lstinputlisting[language=javascript]{code/querying.js}
+\end{frame}
+
+\begin{frame}
+\frametitle{Query Objects}
+\lstinputlisting[language=javascript]{code/queryobjects.js}
+\end{frame}
+
+\begin{frame}
+\frametitle{Geospatial Support}
+\lstinputlisting[language=javascript]{code/geospatial.js}
+\end{frame}
+
+\begin{itemizeframe}
+\frametitle{Finally, Data Scalability.}
+\item Replica Sets
+\item AutoSharding
+\end{itemizeframe}
+
+\section{Scala + MongoDB == Win}
+
+\subsection{MongoDB + Scala Drivers}
+
+\begin{itemizecodeframe}
+\frametitle{Using Scala with the official Java Driver}
+\item JVM Object are JVM Objects...
+\lstinputlisting{code/javadriver_sample.scala}
+\item ... Not terribly ``Scala-ey''.
+\item The Java driver works, but doesn't fit well in Scala.
+\item You need to convert your Scala objects to Java Objects, and get nothing but Java Objects out.
+\item Gets messy quickly.
+\end{itemizecodeframe}
+
+\begin{codeframe}
+\frametitle{The Scala Community Adapted...}
+Compare the previous with various Scala drivers.
+\begin{itemize}
+    \item mongo-scala-driver wraps \& enhances the Java driver:
+        \lstinputlisting{code/mongo-scala-driver_sample.scala}
+    \item .. Much better, although I was confused initially.  Has a object<->MongoDB mapping layer.
+    \item lift-mongodb has more than one way to do it... here's just a taste:
+        \lstinputlisting{code/lift-mongodb_sample.scala}
+    \item ... Lift's JS \& JSON tools make it very flexible, as we'll see later.  Also has an ActiveRecord style Object<->MongoDB Mapping layer.
+    \item Casbah reflects my own attempt at creating a sane interface between Scala \& MongoDB.  Influenced by pymongo:
+        \lstinputlisting{code/casbah_sample.scala}
+    \item ... The syntax is still growing but is meant to match Scala syntax sanely.  Object<->MongoDB Mapping coming soon.
+    \item We're going to cover several tools, although I know Casbah best.
+\end{itemize}
+\end{codeframe}
+
+\subsection{Interlude: Helping Scala + Java play nice together.}
+\begin{itemizeframe}
+    \frametitle{Helping Java + Scala Interact}
+    \item Implicits, ``Pimp My Library'' and various conversion helper tools simplify the work of interacting with Java.
+    \item<2-> Scala and Java have their own completely different collection libraries. 
+    \item<3-> Some builtins ship with Scala to make this easier.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Interoperability in Scala 2.7.x}
+    \item Scala 2.7.x shipped with \texttt{scala.collection.jcl}.
+    \item<2-> \texttt{scala.collection.jcl.Conversions} contained some implicit converters, but only to and from the wrapper versions - no support for ``real'' Scala collections.
+    \item<3-> Neglected useful base interfaces like \texttt{Iterator} and \texttt{Iterable}
+    \item<3-> @jorgeortiz85 provided \texttt{scala-javautils}, which used ``Pimp My Library'' to do a better job.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Interoperability in Scala 2.8.x}
+    \item Scala 2.8.x improves the interop game significantly.
+    \item<2-> JCL is gone - focus has shifted to proper interoperability w/ built-in types.
+    \item<3-> \texttt{scala.collection.jcl.Conversions} replaced by \texttt{scala.collection.JavaConversions} - provides implicit conversions to \& from Scala \& Java Collections.
+    \item<3-> Includes support for the things missing in 2.7 (\texttt{Iterable}, \texttt{Iterator}, etc.)
+    \item<3-> Great for places where the compiler can guess what you want (implicits); falls short in some cases (like BSON Encoding, as we found in Casbah)
+    \item<4-> @jorgeortiz85 has updated \texttt{scala-javautils} for 2.8 with  \texttt{scalaj-collection}
+    \item<4-> Explicit \texttt{asJava} / \texttt{asScala} methods for conversions.  Adds \texttt{foreach} method to Java collections.
+\end{itemizecodeframe}
+
+\begin{itemizeframe}
+    \frametitle{So WTF is an `Implicit', anyway?}
+    \item Implicit Arguments
+        \begin{itemize}
+        \item `Explicit' arguments indicates a method argument you pass, well \emph{explicitly}.
+        \item `Implicit' indicates a method argument which is... \emph{implied}. (But you can pass them explicitly too.)
+        \item Implicit arguments are passed in Scala as an additional argument list:
+            \lstinputlisting{code/implicit_sample_arg1.scala}
+        \pause
+        \item How does this differ from default arguments?
+        \end{itemize}
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{So WTF is an `Implicit', anyway?}
+    \item Implicit Methods/Conversions
+        \begin{itemize}
+            \item If you try passing a type to a Scala method argument which  doesn't match...
+                \lstinputlisting{code/implicit_sample_method1.scala}
+                
+            \item<2-> A fast and loose example, but simple.  Fails to compile.
+            \item<3-> But with implicit methods, we can provide a conversion path...
+                \lstinputlisting{code/implicit_sample_method2.scala}
+            \item<4-> In a dynamic language, this may be called ``monkey patching''. Unlike Perl, Python, etc. Scala resolves implicits at compile time.
+        \end{itemize}
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Pimp My Library}
+    \item Coined by Martin Odersky in a 2006 Blog post.  Similar to C\# extension methods, Ruby modules.
+    \item<2-> Uses implicit conversions to tack on new methods at runtime.
+    \item<3-> Either return a new ``Rich\_'' or anonymous class...
+        \lstinputlisting{code/pimp_sample1.scala}
+\end{itemizeframe}
+\end{document}
+
+
