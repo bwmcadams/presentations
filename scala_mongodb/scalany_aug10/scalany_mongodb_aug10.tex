@@ -44,17 +44,20 @@ colorlinks=false}
  }
 
 
- \lstdefinelanguage{JavaScript}{
-    keywords={attributes, class, classend, do, empty, endif, endwhile, fail, function, functionend, if, implements, in, inherit, inout, not, of, operations, out, return, set, then, types, while, use},
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break}
     keywordstyle=\color{blue}\bfseries,
-    ndkeywords={},
-    ndkeywordstyle=\color{yellow}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{darkgray}\bfseries,
     identifierstyle=\color{black},
     sensitive=false,
     comment=[l]{//},
-    commentstyle=\color{green}\ttfamily,
-    stringstyle=\color{red}\ttfamily
- }
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
 \usepackage{caption}
 \DeclareCaptionFont{white}{\color{white}}
 \DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
@@ -65,7 +68,10 @@ colorlinks=false}
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
- 
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
 % Default settings for code listings
 \lstset{
   frame=tb,%
@@ -210,44 +216,6 @@ colorlinks=false}
 \end{frame}
 
 \section{Introduction}
-\subsection{Exposition}
-
-\begin{itemizeframe}
-\frametitle{Who Am I?}
-    \item Started in Perl - lots of MySQL + Sybase (some PostgreSQL + Oracle)
-	\item Spent time in C, PHP, Java, Python, C\#
-	\item Built a bond trading platform with Perl and Java
-	\item Last few years - lots of Python
-	\item Last year - IronPython, C\#, MongoDB... 
-	\item Research into NoSQL Tools led to MongoDB
-\end{itemizeframe}
-
-
-\begin{itemizeframe}
-\frametitle{Briefly - Sluggy.com Rundown}
-    \item I've maintained systems (and some code) for Sluggy.com since ~1999
-    \item Original system was Perl + FreeBSD (flat files)
-    \item Eventually migrated to Linux + PHP w/ MySQL
-    \item Last Year: Rewrote with Python (Pylons) + MongoDB (pymongo + MongoKit), went live ~1 year ago.
-    \item With Mongo, serving ~50GB/day (1.5TB of traffic/month on a single slicehost virtual machine)
-    \item Opened my eyes to the new world of NoSQL
-    \item See my talk from MongoNYC 2010 on our migration + what was learned
-\end{itemizeframe}
-
-\begin{itemizeframe}
-\frametitle{Current Gig}
-    \item Started at Novus Partners last fall
-    \item Was toying with Scala while looking for work
-    \item Dove into first project with Scala - haven't looked back.
-    \item Existing Java development team now working in Scala
-    \item Just expanded development team to another Scala developer
-    \item Introduced MongoDB for rapid \& flexible data interaction for frontend.
-    \item Several Open Source packages yielded...
-        \begin{itemize}
-            \item Casbah (mongoDB + Scala driver layer)
-            \item Luau (mongoDB + Hadoop integration, written in Scala)
-        \end{itemize}
-\end{itemizeframe}
 
 \subsection{What is MongoDB?}
 
@@ -262,7 +230,7 @@ colorlinks=false}
         \end{itemize}
     \item<3-> Free license (A-GPL) cross-platform (Packages for Linux, Windows, Mac OS X, Windows, FreeBSD \& Solaris)
     \item<4-> Cursor-based query results 
-    \item<5-> Serverside Javascript
+    \item<5-> ServerSide Javascript
         \begin{itemize}
             \item<5-> Stored Javascript functions server-side
             \item<5-> Powerful aggregation - Map/Reduce, Group Commands
@@ -275,7 +243,7 @@ colorlinks=false}
 \begin{itemizeframe}
 \frametitle{Programming with MongoDB}
 \item Provides a native API which allows interaction to adapt to the programming language (rather than vice versa).
-\item<2-> Official drivers for...
+\item<2-> Official drivers for\ldots
     \begin{itemize}
         \item<2-> C
         \item<2-> C++
@@ -286,19 +254,19 @@ colorlinks=false}
         \item<2-> Python
         \item<2-> Ruby
     \end{itemize}
-\item<3-> Community supported drivers include...
+\item<3-> Community supported drivers include\ldots
     \begin{itemize}
         \item<3-> .Net: C\# \& F\#
         \item<3-> JVM: Clojure, Scala, Groovy
         \item<3-> Erlang
         \item<3-> Haskell
         \item<3-> Go 
-        \item<3-> ... and many more.
+        \item<3-> \ldots and many more.
     \end{itemize}
 \end{itemizeframe}
 \begin{frame}
 \frametitle{But is anyone actually *using* it?!?}
-    MongoDB is deployed in production at companies including...
+    MongoDB is deployed in production at companies including\ldots
     \begin{itemize}
         \item New York Times 
         \item Foursquare 
@@ -307,71 +275,257 @@ colorlinks=false}
         \item Etsy 
         \item Disqus
         \item Github\pause
-        \item ... The Large Hadron Collider.  
+        \item \ldots The Large Hadron Collider.  
     \end{itemize}
 \end{frame}
 
 \subsection{A Taste of MongoDB}
+\begin{itemizeframe}
+    \frametitle{Core Concepts}
+    \item MongoDB's equivalent to ``tables'' are called ``collections'';``collections'' contain ``documents'' (individual pieces of data)
+    \item Databases \& Collections are lazy - they are created when first inserted into.
+    \item MongoDB's wire format/internal document representation is BSON\ldots
+    \begin{itemize}{\small
+        \item {\bf BSON} is a binary optimized flavor of {\bf JSON}; corrects {\bf JSON}'s inefficiency in string encoding (Base64).
+        \item Supports extras including Regular Expressions, Byte Arrays, DateTimes \& Timestamps, as well as datatypes for Javascript code blocks \& functions.
+        \item {\bf BSON} implementation being split into its own package in most drivers.
+        \item Creative Commons licensed {\bf http://bsonspec.org}
+    }\end{itemize}
+    \item {\scriptsize Java driver represents {\bf BSON} with a map-like {\bf DBObject} (Which most Scala drivers use); many dynamic languages (Perl, Ruby, Python, etc) use native dictionary objects. }
+\end{itemizeframe}
 
-\begin{frame}
+
+
+\begin{itemizecodeframe}
 \frametitle{The basics of Querying}
-\lstinputlisting[language=javascript]{code/querying.js}
-\end{frame}
+    \item Find a single row with \emph{findOne()}; returns the first document found (by natural order).  
+    \item You can find all documents matching your query with \emph{find()}.  No query means you get the entire collection back.
+    \item Queries are specified as {\bf BSON} documents to match against.
+    \item The \emph{find()} and \emph{findOne()} methods can take an optional second {\bf DBObject} specifying the fields to return.
+    \item If you have an embedded object (for example, an address object) you can retrieve it with dot notation in the fields list (e.g. {\em ``address.city''} retrieves just the city value).
+    \item Use {\em limit()}, {\em skip()} and {\em sort()} on result objects ({\bf DBCursor} in Java-driver land) to adjust your results.  These all return a new cursor.  
+    \item {\em distinct()} can be used (on {\bf DBCollection} to find all distinct values for a given key; it returns a list of values.
+\lstinputlisting[language=JavaScript]{code/querying.js}
+\end{itemizecodeframe}
 
-\begin{frame}
-\frametitle{Query Objects}
-\lstinputlisting[language=javascript]{code/queryobjects.js}
-\end{frame}
+\begin{itemizecodeframe}
+\frametitle{Query Operators}
+ \item MongoDB is no mere Key-Value store. There are myriad powerful operators to enhance your MongoDB queries\ldots
+\begin{itemize}{\small
+    \item Conditional Operators: {\bf \$gt} (>), {\bf \$lt} (<), {\bf \$gte (>=)},  {\bf \$lte (<=)}
+    \item Negative Equality: {\bf \$ne} (!=) 
+    \item Array Operators: {\bf \$in} (SQL ``IN'' clause\ldots takes an array), {\bf \$nin} (Opposite of ``IN''), {\bf \$all} (Requires all values in the array match), {\bf \$size} (Match the size of an array)
+    \item Field Defined: {\bf \$exists} (boolean argument)(Great in a schemaless world)
+    \item Regular Expressions (Language dependent - most drivers support it)
+    \item Pass Arbitrary Javascript with {\bf \$where} (No OR statements, so use WHERE for complex range filters)
+    \item Negate any operator with {\bf \$not}
+    }
+\end{itemize}
+\item Using a query operator requires nested objects\ldots
+\lstinputlisting[language=JavaScript]{code/queryoperators_sample.js}
+\item No syntactic sugar in Java to make it easier\ldots
+\end{itemizecodeframe}
 
-\begin{frame}
+\begin{itemizecodeframe}
+    \frametitle{Insert/Update/Save}
+    \item Objects in MongoDB Collections have an ``\_id'' field, which must be unique.
+    \item Three ways to add/update data in MongoDB\ldots
+        \begin{itemize}
+            \item \texttt{insert()} always attempts to add a new row.  If ``\_id'' is present and contains a value already in the collection, insert fails.
+            \item \texttt{save()} inserts if there is no ``\_id'' field, otherwise it tries to update the document with the specified ``\_id''.
+            \item \texttt{update()} takes a query and the new values to save.  By default it updates only the first document matching the query.
+            \item For \texttt{update()} you can specify two booleans whose default is false: \emph{upsert}, which indicates you wish to create a new document if the query doesn't match,  and \emph{multi}, which allows updating \textbf{all} documents who match the query.
+        
+        \end{itemize}
+    \lstinputlisting[language=JavaScript]{code/mongo_insert.js}
+\end{itemizecodeframe}
+
+
+\begin{itemizecodeframe}
 \frametitle{Geospatial Support}
-\lstinputlisting[language=javascript]{code/geospatial.js}
-\end{frame}
+\item MongoDB supports Geospatial indexing and distance based queries
+\item I loaded all of the NYC Subway data (in Google Transit format) into MongoDB
+\item Quick python code to index the ``Stops'' data.
+\lstinputlisting[language=Python]{code/geoindex_snippet.py}
+\item ``stop\_geo'' field is now Geospatially indexed for each stop.
+\item How hard is it to find the 5 closest subway stops to Meetup HQ?
+\end{itemizecodeframe}
+\begin{itemizecodeframe}
+\frametitle{Geospatial Support}
+\lstinputlisting[language=JavaScript]{code/geospatial.js}
+\item Further commands exist to define a rectangle or circle radius for the search.  
+\end{itemizecodeframe}
 
 \begin{itemizeframe}
 \frametitle{Finally, Data Scalability.}
-\item Replica Sets
-\item AutoSharding
+\item Traditional master-slave replication
+\item Replica Sets (new in 1.6)
+    \begin{itemize}
+        \item Replaces master-slave setup with 1-7 server clusters
+        \item Automatic failover and recovery
+    \end{itemize}
+\item AutoSharding (new in 1.6)
+    \begin{itemize}
+        \item Horizontal scaling - partition your collections \& data across as many nodes as necessary.
+        \item Multiple nodes can service the same shard, allowing for balancing \& failover.
+        \item Map/Reduce runs across multiple shards, allowing concurrency.
+    \end{itemize}
 \end{itemizeframe}
 
 \subsection{MongoDB + Scala Drivers}
 
 \begin{itemizecodeframe}
 \frametitle{Using Scala with the official Java Driver}
-\item JVM Object are JVM Objects...
+\item JVM Object are JVM Objects\ldots
 \lstinputlisting{code/javadriver_sample.scala}
-\item ... Not terribly ``Scala-ey''.
+\item \ldots Not terribly ``Scala-ey''.
 \item The Java driver works, but doesn't fit well in Scala.
 \item You need to convert your Scala objects to Java Objects, and get nothing but Java Objects out.
 \item Gets messy quickly.
 \end{itemizecodeframe}
 
 \begin{codeframe}
-\frametitle{The Scala Community Adapted...}
+\frametitle{The Scala Community Adapted\ldots}
 Compare the previous with various Scala drivers.
 \begin{itemize}
     \item mongo-scala-driver wraps \& enhances the Java driver:
         \lstinputlisting{code/mongo-scala-driver_sample.scala}
     \item .. Much better, although I was confused initially.  Has a object<->MongoDB mapping layer.
-    \item lift-mongodb has more than one way to do it... here's just a taste:
+    \item lift-mongodb has more than one way to do it\ldots here's just a taste:
         \lstinputlisting{code/lift-mongodb_sample.scala}
-    \item ... Lift's JS \& JSON tools make it very flexible, as we'll see later.  Also has an ActiveRecord style Object<->MongoDB Mapping layer.
+    \item \ldots Lift's JS \& JSON tools make it very flexible, as we'll see later.  Also has an ActiveRecord style Object<->MongoDB Mapping layer.
     \item Casbah reflects my own attempt at creating a sane interface between Scala \& MongoDB.  Influenced by pymongo:
         \lstinputlisting{code/casbah_sample.scala}
-    \item ... The syntax is still growing but is meant to match Scala syntax sanely.  Object<->MongoDB Mapping coming soon.
+    \item \ldots The syntax is still growing but is meant to match Scala syntax sanely.  Object<->MongoDB Mapping coming soon.
     \item We're going to cover several tools, although I know Casbah best.
 \end{itemize}
 \end{codeframe}
 
-\section{Interlude: Helping Scala + Java play nice together.}
+\section{Scala + MongoDB == Win}
+\subsection{mongo-scala-driver}
+\begin{itemizecodeframe}
+    \item At its core \texttt{mongo-scala-driver} provides a few improvements over the Java driver via wrappers.
+    \item Converting the Java objects to Scala requires explicit conversions, converts \texttt{DBCollection} to \texttt{DBObjectCollection}.
+    \item \texttt{DBObjectCollection} implements \texttt{Iterable}, and provides several operators \ldots 
+        \begin{itemize}
+            \item \texttt{<<} maps to ``insert''
+            \item \texttt{<<?} ``insert''s, and checks for errors.
+            \item \texttt{+=} maps to ``save''
+            \item \texttt{-=} maps to ``remove''
+        \end{itemize}
+    \item \texttt{Map} objects can be used in place of \texttt{DBObject} (as previously shown) due to implicit conversions.
+    \item Object mapping implemented via ``Shapes''; provides Query syntax.
+\end{itemizecodeframe}
 
+\begin{itemizecodeframe}
+    \frametitle{mongo-scala-driver: Shapes for Object Mapping}
+    \item ``Shapes'' uses Scala code to define Object models.
+    \item Flexible, but syntactically verbose.
+    \item Object representing ``stops'' on the NY Subway\ldots
+
+    \lstinputlisting{code/shapes_sample.scala}
+\end{itemizecodeframe}
+
+\subsection{lift-mongo}
+\begin{itemizecodeframe}
+    \frametitle{lift-mongo}
+    \item Formerly ``scamongo'', integrated with Lift as of 2.0 
+    \item Base code provides session wrappers to MongoDB, still utilizes Java driver's DBObject code.
+            \lstinputlisting{code/lift-mongodb-base_sample.scala}
+    \item ``lift-mongo-record'' provides object mapping.
+    \item No native query syntax, but Foursquare is working on open sourcing something they use internally.
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{lift-mongo-record \& querying}
+    \item Object definitions are fairly straightforward\ldots
+            \lstinputlisting{code/lift-mongodb-record_sample.scala}
+    \item Foursquare's query library allow for a saner way to query data\ldots 
+            \lstinputlisting{code/lift-mongodb-4sq_sample.scala}
+    \item \emph{Thank you} to \texttt{@jliszka} for sharing this!
+\end{itemizecodeframe} 
+ 
+\subsection{casbah}
+\begin{itemizeframe}
+    \frametitle{Shameless Self Promotion}
+    \item Why Casbah?
+	\item     Background in pymongo + MongoKit 
+
+	\item     Java driver too\ldots ``Java-ey''
+
+	\item     Didn't quite ``get'' scamongo and mongo-scala-driver early on
+
+	\item     scamongo's base didn't fix most of my issues w/ the Java Driver (just helped connection management)
+
+	\item     scamongo's ORM libraries were dependent on Lift (now scamongo is defunct and has become lift-mongo)
+
+	\item     mongo-scala-driver's shapes, etc were \emph{very} confusing to me as a newbie w/o much functional background
+
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Casbah is Born}
+    \item Borrowed bits I liked/understood from other places and built something that felt comfortable to me 
+    \item Early on, very pythonic
+    \item Query DSL, grown from wanting a feel close to the ``metal'' based on generic MongoDB knowledge
+    \item Heavily influenced in structure by \texttt{@jorgeortiz85}'s libraries
+    \item Quickly grew as I used more and more MongoDB with Scala; features have been grown organically from my own needs.
+\end{itemizeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Interacting with DBObjects}
+    \item \texttt{DBObject} is far too structurally Java.
+    \item Sought to make them more usable \& readable from Scala
+    \item Most recently - match Scala 2.8 collection Factory/Builders
+    \item Implicit conversions of \texttt{Product} (base for Tuple), \texttt{Map}.  Explicit method \texttt{asDBObject} for corner cases.
+    \item `Pimped' version of \texttt{DBObject} via \texttt{MongoDBObject} - lets DBObject implement Scala's \texttt{Map} trait.
+        \lstinputlisting{code/casbah_dbobject_sample1.scala}
+    \item DBCollection behaves as a Scala \texttt{Iterable}, but interaction is mostly the same (with addition of methods like \texttt{+=}).
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Fluid Query Syntax}
+    \item My thought: Instead of keeping track of \textbf{Yet Another API}, MongoDB's Query Objects should ``just work''.
+    \item Two kinds of Query Operators - `Bareword' and `Core'.
+    \item Bareword Operators can be started as `bare' statements:
+        \lstinputlisting{code/casbah_bareword_ops1.scala}\pagebreak
+    \item Core Operators need to be anchored to the right of a \texttt{DBObject} or a String (typically representing a field name):
+        \lstinputlisting{code/casbah_core_ops1.scala}
+    \item Just a small taste - all MongoDB Query Objects are supported (For 1.4.x syntax - 1.6.x (\$or, etc. soon))
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Other Features}
+    \item Custom converter implementations which allow most Scala types to be serialized cleanly to MongoDB.  (Joda time serialization/deserialization support).
+    \item Improved GridFS Functionality (loan pattern, support for \texttt{scala.io.Source})
+    \item Wrapper objects for Map/Reduce system (Help parse results to warn of errors, etc)
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Coming Soon}
+    \item Max Afonov {\scriptsize @max4f} working on annotation driven object mapping.
+    \item Investigating ActiveRecord implementation, with fluid query syntax support.
+    \item Support for MongoDB 1.6.x features.
+\end{itemizecodeframe}
+
+\subsection{STM + MongoDB via Akka}
+\begin{itemizecodeframe}
+    \frametitle{STM + MongoDB via Akka}
+    \item Akka has an implementation of STM inspired by Clojure's; allows datastructures such as Maps and Vectors to become transactional.
+    \item Akka STM supports persistence to several backends including MongoDB.
+    \item Allows you to setup relatively simple, code managed concurrent transactions with state stored safely in MongoDB.
+    \item Supports JTA; not yet distributed (Dependent on Multiverse, which is working on distributed STM)
+\end{itemizecodeframe}
+
+\section{Interlude: Helping Scala + Java play nice together.}
+\subsection{Java <-> Scala Basics}
 \begin{itemizeframe}
     \frametitle{Helping Java + Scala Interact}
     \item Implicits, ``Pimp My Library'' and various conversion helper tools simplify the work of interacting with Java.
     \item<2-> Scala and Java have their own completely different collection libraries. 
     \item<3-> Some builtins ship with Scala to make this easier.
 \end{itemizeframe}
-\subsection{Java <-> Scala Basics}
+
 
 \begin{itemizeframe}
     \frametitle{Interoperability in Scala 2.7.x}
@@ -398,7 +552,7 @@ Compare the previous with various Scala drivers.
     \item Implicit Arguments
         \begin{itemize}
         \item `Explicit' arguments indicates a method argument you pass, well \emph{explicitly}.
-        \item `Implicit' indicates a method argument which is... \emph{implied}. (But you can pass them explicitly too.)
+        \item `Implicit' indicates a method argument which is\ldots \emph{implied}. (But you can pass them explicitly too.)
         \item Implicit arguments are passed in Scala as an additional argument list:
             \lstinputlisting{code/implicit_sample_arg1.scala}
         \pause
@@ -410,11 +564,11 @@ Compare the previous with various Scala drivers.
     \frametitle{So WTF is an `Implicit', anyway?}
     \item Implicit Methods/Conversions
         \begin{itemize}
-            \item If you try passing a type to a Scala method argument which  doesn't match...
+            \item If you try passing a type to a Scala method argument which  doesn't match\ldots
                 \lstinputlisting{code/implicit_sample_method1.scala}
                 
             \item<2-> A fast and loose example, but simple.  Fails to compile.
-            \item<3-> But with implicit methods, we can provide a conversion path...
+            \item<3-> But with implicit methods, we can provide a conversion path\ldots
                 \lstinputlisting{code/implicit_sample_method2.scala}
             \item<4-> In a dynamic language, this may be called ``monkey patching''. Unlike Perl, Python, etc. Scala resolves implicits at compile time.
         \end{itemize}
@@ -424,96 +578,16 @@ Compare the previous with various Scala drivers.
     \frametitle{Pimp My Library}
     \item Coined by Martin Odersky in a 2006 Blog post.  Similar to C\# extension methods, Ruby modules.
     \item<2-> Uses implicit conversions to tack on new methods at runtime.
-    \item<3-> Either return a new ``Rich\_'' or anonymous class...
+    \item<3-> Either return a new ``Rich\_'' or anonymous class\ldots
         \lstinputlisting{code/pimp_sample1.scala}
     \item<3-> A note: with regards to type boundaries, \texttt{[A <: SomeType]} won't allow implicitly converted values.  You can whitelist them by using \texttt{[A <\% SomeType]} instead.
 \end{itemizeframe}
-\section{Scala + MongoDB == Win}
-\subsection{mongo-scala-driver}
-\subsubsection{Shapes for Object Mapping}
-
-\subsection{lift-mongo}
-\subsubsection{lift-mongo-record for Object Mapping}
-\subsubsection{Foursquare's approach to better querying}
-
-\subsection{casbah}
-\begin{itemizeframe}
-    \frametitle{Shameless Self Promotion}
-    \item Why Casbah?
-	\item     Background in pymongo + MongoKit 
-
-	\item     Java driver too... ``Java-ey''
-
-	\item     Didn't quite ``get'' scamongo and mongo-scala-driver early on
-
-	\item     scamongo's base didn't fix most of my issues w/ the Java Driver (just helped connection management)
-
-	\item     scamongo's ORM libraries were dependent on Lift (now scamongo is defunct and has become lift-mongo)
-
-	\item     mongo-scala-driver's shapes, etc were \emph{very} confusing to me as a newbie w/o much functional background
-
-\end{itemizeframe}
-
-\begin{itemizeframe}
-    \frametitle{Casbah is Born}
-    \item Borrowed bits I liked/understood from other places and built something that felt comfortable to me 
-    \item Early on, very pythonic
-    \item Query DSL, grown from wanting a feel close to the ``metal'' based on generic MongoDB knowledge
-    \item Heavily influenced in structure by \texttt{jorgeortiz85}'s libraries
-    \item Quickly grew as I used more and more MongoDB with Scala; features have been grown organically from my own needs.
-\end{itemizeframe}
-
-\begin{itemizecodeframe}
-    \frametitle{Interacting with DBObjects}
-    \item \texttt{DBObject} is far too structurally Java.
-    \item Sought to make them more usable \& readable from Scala
-    \item Most recently - match Scala 2.8 collection Factory/Builders
-    \item Implicit conversions of \texttt{Product} (base for Tuple), \texttt{Map}.  Explicit method \texttt{asDBObject} for corner cases.
-    \item `Pimped' version of \texttt{DBObject} via \texttt{MongoDBObject} - lets DBObject implement Scala's \texttt{Map} trait.
-        \lstinputlisting{code/casbah_dbobject_sample1.scala}
-    \item DBCollection behaves as a Scala \texttt{Iterable}, but interaction is mostly the same (with addition of methods like \texttt{+=}).
-\end{itemizecodeframe}
-
-\begin{itemizecodeframe}
-    \frametitle{Fluid Query Syntax}
-    \item My thought: Instead of keeping track of \textbf{Yet Another API}, MongoDB's Query Objects should ``just work''.
-    \item Two kinds of Query Operators - `Bareword' and `Core'.
-    \item Bareword Operators can be started as `bare' statements:
-        \lstinputlisting{code/casbah_bareword_ops1.scala}
-    \item Core Operators need to be anchored to the right of a \texttt{DBObject} or a String (typically representing a field name):
-        \lstinputlisting{code/casbah_core_ops1.scala}
-    \item Just a small taste - all MongoDB Query Objects are supported (For 1.4.x syntax - 1.6.x (\$or, etc. soon))
-\end{itemizecodeframe}
-
-\begin{itemizecodeframe}
-    \frametitle{Other Features}
-    \item Custom convertor implementations which allow most Scala types to be serialized cleanly to MongoDB.  (Joda time serialization/deserialization support).
-    \item Improved GridFS Functionality (loan pattern, support for \texttt{scala.io.Source})
-    \item Wrapper objects for Map/Reduce system (Help parse results to warn of errors, etc)
-\end{itemizecodeframe}
-
-\begin{itemizecodeframe}
-    \frametitle{Coming Soon}
-    \item Max Afonov {\scriptsize @max4f} working on annotation driven object mapping.
-    \item Investigating ActiveRecord implementation, with fluid query syntax support.
-    \item Support for MongoDB 1.6.x features.
-\end{itemizecodeframe}
-
-\subsection{STM + MongoDB via Akka}
-\begin{itemizecodeframe}
-    \frametitle{STM + MongoDB via Akka}
-    \item Akka has an implementation of STM inspired by Clojure's; allows datastructures such as Maps and Vectors to become transactional.
-    \item Akka STM supports persistence to several backends including MongoDB.
-    \item Allows you to setup relatively simple, code managed concurrent transactions with state stored safely in MongoDB.
-    \item Supports JTA; not yet distributed (Dependent on Multiverse, which is working on distributed STM)
-\end{itemizecodeframe}
-
 \section{Closing}
 \begin{itemizeframe}
     \frametitle{Links}
     \item mongo-scala-driver {\scriptsize http://github.com/alaz/mongo-scala-driver}
     \item lift-mongo {\scriptsize http://www.assembla.com/wiki/show/liftweb/MongoDB}
-    \item FourSquare's Lift Mongo DSL Code ... coming soon? {\scriptsize @jliszka}
+    \item FourSquare's Lift Mongo DSL Code \ldots coming soon? {\scriptsize @jliszka}
     \item Casbah {\scriptsize http://novus.github.com/docs/casbah}
     \item Jorge Ortiz' ({\scriptsize @jorgeortiz85}) Libraries
         \begin{itemize}
