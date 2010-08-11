@@ -79,6 +79,7 @@ colorlinks=false}
   aboveskip=3mm,%
   belowskip=3mm,%
   xleftmargin=2mm,%
+  xrightmargin=2mm,%
   showstringspaces=false,%
   keepspaces=true,%
   columns=[c]fixed,%
@@ -170,7 +171,7 @@ colorlinks=false}
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
 
-\date[MongoDB NY Users Group - 8/10/10]
+\date[MongoDB NY - 8/10/10]
      {MongoDB NY Users Group\\ Aug. 10, 2010}
 
 \subject{Using Scala with MongoDB}
@@ -284,10 +285,10 @@ colorlinks=false}
 \begin{itemizecodeframe}
     \frametitle{User Defined Operators}
     \item Scala allows the definition of operators...
-    \item<2-> Not technically operator overloading, as the JVM doesn't have operators - they're language built-ins in Java, etc.  
-    \item<3-> In Scala, there are no built-in operators.  Some are predefined for sanity (like \texttt{+}, \texttt{-}, \texttt{/} and \texttt{*} on Numeric types)  but operators are just methods.
-    \item<3-> Scala allows any operator to be defined by the user - including some special ones like unaries (\texttt{+foo}, \texttt{-foo}).
-    \item<4-> Syntactic Sugar: To facilitate statements like \texttt{foo + bar} Scala allows methods to be called without the \texttt{.} or parentheses\ldots Useful for DSLs and fluid syntaxes!
+    \item Not technically operator overloading, as the JVM doesn't have operators - they're language built-ins in Java, etc.  
+    \item In Scala, there are no built-in operators.  Some are predefined for sanity (like \texttt{+}, \texttt{-}, \texttt{/} and \texttt{*} on Numeric types)  but operators are just methods.
+    \item Scala allows any operator to be defined by the user - including some special ones like unaries (\texttt{+foo}, \texttt{-foo}).
+    \item Syntactic Sugar: To facilitate statements like \texttt{foo + bar} Scala allows methods to be called without the \texttt{.} or parentheses\ldots Useful for DSLs and fluid syntaxes!
     \lstinputlisting{code/operators.scala}
 \end{itemizecodeframe}
 
@@ -306,7 +307,6 @@ colorlinks=false}
             \item \texttt{apply()} (and \texttt{unapply})
             \item Useful tools like \texttt{group}, \texttt{foreach} and \texttt{map}
         \end{itemize}
-        \lstinputlisting{code/fp.scala}
 \end{itemizecodeframe}
 
 \subsection{Java <-> Scala Basics}
@@ -365,13 +365,14 @@ colorlinks=false}
         \end{itemize}
 \end{itemizeframe}
 
-\begin{itemizecodeframe}
+\begin{itemizeframe}
     \frametitle{Pimp My Library}
     \item Coined by Martin Odersky in a 2006 Blog post.  Similar to C\# extension methods, Ruby modules.
-    \item<2-> Uses implicit conversions to tack on new methods at runtime.
-    \item<3-> Either return a new ``Rich\_'' or anonymous class\ldots
+    \item Uses implicit conversions to tack on new methods at runtime.
+    \item Either return a new ``Rich\_'' or anonymous class\ldots
         \lstinputlisting{code/pimp_sample1.scala}
-\end{itemizecodeframe}
+\end{itemizeframe}
+
 \subsection{What is MongoDB?}
 
 \begin{itemizeframe}
