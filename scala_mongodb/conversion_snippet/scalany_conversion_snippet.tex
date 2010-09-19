@@ -1,0 +1,267 @@
+\documentclass{beamer}
+
+% Copyright 2010 by Brendan W. McAdams <bwmcadams@gmail.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+
+\mode<presentation>
+{
+  % \usetheme{Dresden}      
+  \usetheme{CambridgeUS}      
+  \usecolortheme{seahorse}
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\hypersetup{backref,  
+pdfpagemode=FullScreen,  
+colorlinks=false}
+
+ % "define" Scala
+\lstdefinelanguage{Scala}{
+   morekeywords={abstract,case,catch,class,def,%
+     do,else,extends,false,final,finally,%
+     for,forSome,if,implicit,import,lazy,%
+     match,mixin,%
+     new,null,object,override,package,%
+     private,protected,requires,return,sealed,%
+     super,this,throw,trait,true,try,%
+     type,val,var,while,with,yield},
+   otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+   sensitive=true,
+   morecomment=[l]{//},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   morestring=[b]',
+   morestring=[b]"""
+ }
+
+
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break}
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% Default settings for code listings
+\lstset{
+  frame=tb,%
+  language=Scala,%
+  aboveskip=3mm,%
+  belowskip=3mm,%
+  xleftmargin=4mm,%
+  showstringspaces=false,%
+  keepspaces=true,%
+  columns=[c]fixed,%
+  basicstyle={\tiny\ttfamily},%
+  escapechar=¤,%
+  numbers=none,%
+  numberstyle=\tiny\color{gray},%
+  keywordstyle=\color{blue},%
+  commentstyle=\color{dkgreen},%
+  stringstyle=\color{mauve},%
+  frame=single,%
+  breaklines=true,%
+  breakatwhitespace=true,%
+  tabsize=2,%
+  firstnumber=0,%
+  numbersep=1.5mm,%
+  numberstyle=\tiny%
+}
+
+% \lstdefinestyle{floating}{%
+%     xleftmargin=10pt,%
+%     xrightmargin=5pt,%
+%     aboveskip=4mm,%
+%     belowskip=4mm,%
+%     fontadjust=true,%
+%     columns=[c]flexible,%
+%     keepspaces=true,%
+%     basewidth={0.5em, 0.425em},%
+%     tabsize=2,%
+%     basicstyle=\renewcommand{\baselinestretch}{0.95}\ttfamily,%
+%     commentstyle=\rm,%
+%     keywordstyle=\bfseries,%
+%     mathescape=true,%
+%     captionpos=b,%
+%     framerule=0.3pt,%
+%     firstnumber=0,%
+%     numbersep=1.5mm,%
+%     numberstyle=\tiny,%
+%     float=tbp,%
+%     frame=tblr,%
+%     framesep=5pt,%
+%     framexleftmargin=3pt,%
+%     abovecaptionskip=\smallskipamount,%
+%     belowcaptionskip=\smallskipamount,%
+% } % to define: caption, label
+
+\newcommand{\code}[1]{%
+    \lstinline[%keywordstyle=,%
+               flexiblecolumns=true,%
+               basicstyle=\ttfamily]£#1£}
+
+\newenvironment{itemizeframe}
+               {\begin{frame}\startitemizeframe} 
+               {\stopitemizeframe\end{frame}}
+              
+\newenvironment{codeframe}
+                {\begin{frame}[allowframebreaks,allowdisplaybreaks]}
+                {\end{frame}}
+                
+\newenvironment{itemizecodeframe}
+              {\begin{frame}[allowframebreaks,allowdisplaybreaks]
+              \startitemizeframe} 
+              {\stopitemizeframe\end{frame}}
+
+\newcommand\startitemizeframe{\begin{itemize}} \newcommand\stopitemizeframe{\end{itemize}}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Integrating Scala + MongoDB]{Scala with MongoDB} % (optional, use only with long paper titles)
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[B.W. McAdams]{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[Novus Partners]{Novus Partners, Inc.}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date[NY Scala Enthusiasts - 8/8/10]
+     {New York Scala Enthusiasts\\ Aug. 8, 2010}
+
+\subject{Using Scala with MongoDB}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+\logo{\includegraphics[width=1.25cm]{novus-logo}}
+
+
+
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+
+\section{Interlude: Helping Scala + Java play nice together.}
+\subsection{Java <-> Scala Basics}
+\begin{itemizeframe}
+    \frametitle{Helping Java + Scala Interact}
+    \item Implicits, ``Pimp My Library'' and various conversion helper tools simplify the work of interacting with Java.
+    \item<2-> Scala and Java have their own completely different collection libraries. 
+    \item<3-> Some builtins ship with Scala to make this easier.
+\end{itemizeframe}
+
+
+\begin{itemizeframe}
+    \frametitle{Interoperability in Scala 2.7.x}
+    \item Scala 2.7.x shipped with \texttt{scala.collection.jcl}.
+    \item<2-> \texttt{scala.collection.jcl.Conversions} contained some implicit converters, but only to and from the wrapper versions - no support for ``real'' Scala collections.
+    \item<3-> Neglected useful base interfaces like \texttt{Iterator} and \texttt{Iterable}
+    \item<3-> @jorgeortiz85 provided \texttt{scala-javautils}, which used ``Pimp My Library'' to do a better job.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Interoperability in Scala 2.8.x}
+    \item Scala 2.8.x improves the interop game significantly.
+    \item<2-> JCL is gone - focus has shifted to proper interoperability w/ built-in types.
+    \item<3-> \texttt{scala.collection.jcl.Conversions} replaced by \texttt{scala.collection.JavaConversions} - provides implicit conversions to \& from Scala \& Java Collections.
+    \item<3-> Includes support for the things missing in 2.7 (\texttt{Iterable}, \texttt{Iterator}, etc.)
+    \item<3-> Great for places where the compiler can guess what you want (implicits); falls short in some cases (like BSON Encoding, as we found in Casbah)
+    \item<4-> @jorgeortiz85 has updated \texttt{scala-javautils} for 2.8 with  \texttt{scalaj-collection}
+    \item<4-> Explicit \texttt{asJava} / \texttt{asScala} methods for conversions.  Adds \texttt{foreach} method to Java collections.
+\end{itemizecodeframe}
+
+\subsection{Implicits and Pimp Hats}
+\begin{itemizeframe}
+    \frametitle{So WTF is an `Implicit', anyway?}
+    \item Implicit Arguments
+        \begin{itemize}
+        \item `Explicit' arguments indicates a method argument you pass, well \emph{explicitly}.
+        \item `Implicit' indicates a method argument which is\ldots \emph{implied}. (But you can pass them explicitly too.)
+        \item Implicit arguments are passed in Scala as an additional argument list:
+            \lstinputlisting{code/implicit_sample_arg1.scala}
+        \pause
+        \item How does this differ from default arguments?
+        \end{itemize}
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{So WTF is an `Implicit', anyway?}
+    \item Implicit Methods/Conversions
+        \begin{itemize}
+            \item If you try passing a type to a Scala method argument which  doesn't match\ldots
+                \lstinputlisting{code/implicit_sample_method1.scala}
+                
+            \item<2-> A fast and loose example, but simple.  Fails to compile.
+            \item<3-> But with implicit methods, we can provide a conversion path\ldots
+                \lstinputlisting{code/implicit_sample_method2.scala}
+            \item<4-> In a dynamic language, this may be called ``monkey patching''. Unlike Perl, Python, etc. Scala resolves implicits at compile time.
+        \end{itemize}
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Pimp My Library}
+    \item {\tiny Coined by Martin Odersky in a 2006 Blog post.  Similar to C\# extension methods, Ruby modules.}
+    \item<2-> {\scriptsize Uses implicit conversions to tack on new methods at runtime.}
+    \item<3-> {\scriptsize Either return a new ``Rich\_'' or anonymous class}\ldots
+        \lstinputlisting{code/pimp_sample1.scala}
+    \item<3-> {\tiny A note: with regards to type boundaries, \texttt{[A <: SomeType]} won't allow implicitly converted values.  You can whitelist them by using \texttt{[A <\% SomeType]} instead.}
+\end{itemizeframe}
+\end{document}
+
+
