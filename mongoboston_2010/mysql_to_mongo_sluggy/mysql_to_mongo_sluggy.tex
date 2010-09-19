@@ -1,0 +1,529 @@
+\documentclass{beamer}
+
+% Copyright 2010 by Brendan W. McAdams <bwmcadams@gmail.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+
+\mode<presentation>
+{
+  % \usetheme{Dresden}      
+  \usetheme{Boadilla}      
+  \usecolortheme{wolverine}
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\hypersetup{backref,  
+pdfpagemode=FullScreen,  
+colorlinks=false}
+
+ % "define" Scala
+\lstdefinelanguage{Scala}{
+   morekeywords={abstract,case,catch,class,def,%
+     do,else,extends,false,final,finally,%
+     for,forSome,if,implicit,import,lazy,%
+     match,mixin,%
+     new,null,object,override,package,%
+     private,protected,requires,return,sealed,%
+     super,this,throw,trait,true,try,%
+     type,val,var,while,with,yield},
+   otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+   sensitive=true,
+   morecomment=[l]{//},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   morestring=[b]',
+   morestring=[b]"""
+ }
+
+
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break}
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% Default settings for code listings
+\lstset{
+  frame=tb,%
+  language=Python,%
+  aboveskip=1.5mm,%
+  belowskip=1.5mm,%
+  xleftmargin=1mm,%
+  xrightmargin=1mm,%
+  showstringspaces=false,%
+  keepspaces=true,%
+  columns=[c]fixed,%
+  basicstyle={\tiny\ttfamily},%
+  escapechar=¤,%
+  numbers=none,%
+  numberstyle=\tiny\color{yellow},%
+  keywordstyle=\color{blue},%
+  commentstyle=\color{dkgreen},%
+  stringstyle=\color{mauve},%
+  frame=single,%
+  breaklines=true,%
+  breakatwhitespace=true,%
+  tabsize=4,%
+  firstnumber=0,%
+  numbersep=1.5mm,%
+  numberstyle=\tiny%
+}
+
+% \lstdefinestyle{floating}{%
+%     xleftmargin=10pt,%
+%     xrightmargin=5pt,%
+%     aboveskip=4mm,%
+%     belowskip=4mm,%
+%     fontadjust=true,%
+%     columns=[c]flexible,%
+%     keepspaces=true,%
+%     basewidth={0.5em, 0.425em},%
+%     tabsize=2,%
+%     basicstyle=\renewcommand{\baselinestretch}{0.95}\ttfamily,%
+%     commentstyle=\rm,%
+%     keywordstyle=\bfseries,%
+%     mathescape=true,%
+%     captionpos=b,%
+%     framerule=0.3pt,%
+%     firstnumber=0,%
+%     numbersep=1.5mm,%
+%     numberstyle=\tiny,%
+%     float=tbp,%
+%     frame=tblr,%
+%     framesep=5pt,%
+%     framexleftmargin=3pt,%
+%     abovecaptionskip=\smallskipamount,%
+%     belowcaptionskip=\smallskipamount,%
+% } % to define: caption, label
+
+\newcommand{\code}[1]{%
+    \lstinline[%keywordstyle=,%
+               flexiblecolumns=true,%
+               basicstyle=\ttfamily]£#1£}
+
+\newenvironment{itemizeframe}
+               {\begin{frame}\startitemizeframe} 
+               {\stopitemizeframe\end{frame}}
+              
+\newenvironment{codeframe}
+                {\begin{frame}[allowframebreaks,allowdisplaybreaks]}
+                {\end{frame}}
+                
+\newenvironment{itemizecodeframe}
+              {\begin{frame}[allowframebreaks,allowdisplaybreaks]
+              \startitemizeframe} 
+              {\stopitemizeframe\end{frame}}
+
+\newcommand\startitemizeframe{\begin{itemize}} \newcommand\stopitemizeframe{\end{itemize}}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Sluggy.com: MySQL to MongoDB]{Migrating from MySQL to MongoDB at Sluggy.com} % (optional, use only with long paper titles)
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[B.W. McAdams]{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[Sluggy Freelance]{Sluggy Freelance, LLC}
+\institute[Evil Monkey Labs]{Evil Monkey Labs, LLC}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date[Mongo Boston - 9/20/10]
+     {Mongo Boston Conference - Sep. 19, 2010}
+
+\subject{Using Scala with MongoDB}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+\logo{\includegraphics[width=3.75cm]{sluggy-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+	\frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection,currentsubsubsection]
+  \end{frame}
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Outline}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\section{Introduction}
+
+\subsection[About Sluggy.com]{Basic Rundown}
+\begin{itemizeframe}
+    \frametitle{Sluggy.com Rundown}
+	\item Live since August 25, 1997
+	\item Updated Every Day (even if it's just filler)
+	\item More Users == More Load
+	\item More Load == More Hardware
+	\item<2-> On Advertising Revenues (e.g. Paying the Bills), Pete says: \texttt{\tiny
+	 I tend to think of advertising as a finky spastic mentally retarded cat who sometimes wants to jump in my lap and other times wants to hiss at me and run for the litterbox and often walks in circles trying to figure out which of the two it wants, followed by dropping dead with a final thought..."ohhh! food!"}
+	\item<3-> Not Google... Not Trying to {\em be} Google. (Can't {\em afford } to think or scale like Google.
+	\item<3-> No dedicated staff or operations budget - advertising revenues cover server costs. Any downtime (be it bugs or system failure) means I get up at 3am to fix it.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Sluggy.com Rundown}
+    \framesubtitle{Some Stats}
+	\item ~50GB/day (1.5TB of traffic/month on a single virtual box)
+	\item 13 years of daily comics = 6500 image files (just for the comics)
+	\item Artist is frequently late in updating.  System has to handle random unexpected cache flushes \& data updates.
+	\item Erratic access behavior: Today's comic is always popular and related load can be easily mitigated.  However, archives may also be hit heavily by new readers or links from a newer strip to previous storylines.  Hard to expect where in 6500+ strips people may be digging from day to day.
+	\item ``LUMP'' Stack (Lighttpd, Ubuntu, MongoDB \& Python)
+\end{itemizeframe}
+
+\subsection[About Sluggy.com]{Technology History}
+
+\begin{itemizeframe}
+\frametitle{Sluggy.com Technology History}
+\framesubtitle{1997 - 2000}
+	\item {\bf August 25, 1997}: Site Started, with basic code by Pete`s friends/coworkers. 
+	\item Static HTML generated via midnight cron executing Perl.  
+	\item No dynamic content - Hand edited HTML for news, navigation, etc.
+	\item File format requires globs: \texttt{\\000217a.gif\\000217b.gif\\000217c.gif} 
+	\item All make up the panels for February 17, 2000.  Artist likes \& understands this format.  Code looks for \texttt{yyMMdd*.(gif|jpg)} via glob and organizes them in order.
+	\item {\em 2000} - Original Developers split off and formed KeenSpot.com using same code \& navigation concepts.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Sluggy.com Technology History}
+    \framesubtitle{~2002}
+	\item Rewrite using MySQL \& PHP (original goal: ``No More HTML Editing'')
+	\item Scope Creep == New Features. Dynamic headlines, news, predefined templates, dynamic navigation and a ``Members Only Club''.
+	\item {\em First Folly} - Reading MySQL and dynamically generating on each page request; Running dynamic code for essentially static content == {\em FAIL}.  Disk I/O DoSing ... ``call datacenter and cross fingers''
+	\item Moved to smarty template caching, generating on-disk cache file upon first request (expires at midnight).
+	\item Next ~4 years became hellish with frequent Midnight crashes/failures as readers pound server for new comic.
+\end{itemizeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Sluggy.com Technology History}
+    \framesubtitle{~2006}
+	\item Server move (For cost reasons) introduced new architecture problems
+	\item Perceived cost savings pushed a move from SCSI/SAS disks to SATA
+	\begin{itemize}
+		\item Between template files \& comic file globs.  Disks couldn't keep up.
+		\item Implemented {\bf memcached} to cache templates off-disk, in memory.  Cached glob results (but not files).  Cached anything else not likely to change - expiry set to a week (midnight for ``index'')
+		\item Sessions performed poorly in both disk and MySQL - caching in memcached helped.
+	\end{itemize}
+	\item Apache began crushing memory \& disk I/O.
+    	\begin{itemize}
+    		\item PHP isn't thread safe; requires forked Apache workers (children are {\em EXPENSIVE})
+			\item Migrated to Lighttpd + FastCGI - IO \& RAM usage of webserver \& PHP became negligible (Lots of tweaking of handling of static files esp. stat caching w/ FAM \& good event handling):
+			    \lstinputlisting{code/lighttpd_config_snippet.conf}
+    	\end{itemize}
+\end{itemizecodeframe}
+
+\begin{itemizeframe}
+    \frametitle{Sluggy.com Technology History}
+    \framesubtitle{2009}
+    \item Rewrote the system in Pylons (Python + SQLAlchemy[MySQL])
+	\item Integrated {\bf Beaker} caching decorators (templates \& code blocks) - simplified adding caching code at need.
+	\item Clean ORM model, light \& fast with lots of caching.
+	\item Ran significantly better than on PHP - infinitely more tunable, sensible, and sane (Not necessarily a knock on PHP - but it was a ~10 year old codebase).
+	\item {\bf memcached} continued to become a big, rickety crutch (cascading failure sucks)
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Sluggy.com Technology History}
+    \framesubtitle{Aug. 2009}
+	\item {\bf August 3, 2009}: Pylons system (v1.0) Live with MySQL backend.
+	\item Huge amounts of our code (as much as 80\%) was dedicated to converting UI Objects to and from Database objects. {\bf WTF?}... Most initial bugs occurred in this model <-> view layer.
+	\item No more forking - Pylons \& Python run threaded via SCGI (Similar to FastCGI). System resources {\em significantly} less taxed by the presentation stack.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Sluggy.com Technology History}
+    \framesubtitle{Aug. 2009}
+	\item {\bf August 14, 2009}: v1.10 Went Live - MySQL replaced by MongoDB (and MongoKit)
+	\item Easy Migration - MongoKit was quickly dropped in place and queries adjusted to new model (Stuck to MySQL schema as much as possible)
+	\item Maintained all bug fixes on MySQL branch for a few weeks ``just in case''
+	\item Performance {\em vastly} improved.
+	\item Over next few months, built tools to use MongoDB in place of {\bf memcached} for caching ({\bf mongodb\_beaker})
+	\item {\em LAMP} replaced by {\bf LUMP} (Lighttpd, Ubuntu, MongoDB \& Python)
+	\item A few things left in {\bf memcached} through a combination of ``makes sense there'' and indolence.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Sluggy.com Technology History}
+    \framesubtitle{Sept. 2009}
+	\item MongoDB completely obviated dependency on dedicated Physical hardware; when a major issue with our ISP came up, migrated to Virtual hosting ({\em slicehost}) instead of Physical Hardware.
+	\item Average system load is {\em ~0.05} on a 2G slice.
+	\item MongoDB uses {\em ~1\%} of CPU on average.
+	\item Switchover to MongoDB version took ~2 minutes (ran data conversion script, deployed new code tag, bounced webserver / Pylons app)
+	\item No downtime in any way attributable to MongoDB since go live - now live with MongoDB over a year.
+\end{itemizeframe}
+
+\section{What We Learned}
+\subsection[Lessons Learned]{Lessons Learned Over Time}
+
+\begin{itemizeframe}
+    \frametitle{memcached can rapidly become a crutch\ldots}
+    \framesubtitle{meant to make up for RDBMS' shortfalls but often masks other issues\ldots}
+	\item {\bf memcached} can be great for things you can afford to lose.
+	\item It's not just about what you ``can't afford to lose''. Beware of cascading failures. 
+	\item Over reliance can cause self-DoSing after a crash, reboot, accidental flush (even of just one keyset) etc... Lesson learned the hard way.
+	\item See {\em Coders at Work} (Siebel) for a great discussion with its creator, Brian Fitzpatrick (founded  LiveJournal \& now a Google employee), about what led to {\bf memcached}'s creation.
+\end{itemizeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{As long as I'm being hyperbolic\ldots}
+    \framesubtitle{MongoDB is a bionic leg replacement\ldots}
+	\item MongoDB's MMAP system gives you a ``free'' MRU cache. Done right and simple; caching on MongoDB is durable, light and fast. Significantly educes amount of scalability-glue code.
+	\item No piles of special code manage caching; if it falls out of memory cache, it is still safely persisted to disk.   
+	\item The more you can put in memory, the less you beat on your disks. Especially important on virtual hosting: Be a Good Neighbor.
+	\item But\ldots {\em don't} build your MongoDB system like a MySQL system (it'll work, but you rapidly lose speed and flexibility)
+	\newpage
+	\begin{itemize}
+    	\item DBRefs should be used sparingly - favor embedded objects (don't be afraid to denormalize and duplicate data); autorefs can be even worse as there's a performance penalty imposed.
+		\item Flexible schemas are good.
+		\item Wasting your time mapping data back and forth between your presentation layer \& RDBMS is not just tedious - it's error prone.
+		\item Object Mappers for MongoDB are fantastic tools but don't overuse them - you take a huge flexibility \& performance hit.  
+		\item Use field specifications, query operators, and atomic updates for maximum effectiveness.  MongoDB excels at slicing out specific parts of a document - especially from embedded/nested fields.
+	\end{itemize}
+\end{itemizecodeframe}
+
+\begin{itemizeframe}
+    \frametitle{Caveats}
+	\item While there is a lot ``wrong'' with our first pass implementation, MongoDB has been consistent, performant and most importantly: {\em forgiving}.
+	\item {\em Someone} has to enforce a consistent schema - if it's not your datastore (like a RDBMS does) then your code or ops people (or both) have to.
+	\item The MongoDB community is vibrant, supportive and consistently brilliant. {\em Use} your community to build the best possible product. 
+	\item Corollary: If there is not a vibrant, supportive and intelligent community behind a product you are evaluating\ldots run. 
+	\item {\em Participate}: A community that takes and never gives back cannot thrive.  Sharing your knowledge and experience goes a long way.
+\end{itemizeframe}
+
+\subsection[Code Produced]{Open Source Code Yielded}
+
+\begin{itemizecodeframe}
+    \frametitle{Open Source Code}
+    \framesubtitle{mongodb\_beaker: Beaker Caching for MongoDB}
+	\item Open Source caching plugin for the Python Beaker stack.  
+	\item Uses distutils plugin entry points.
+	\item Switching from {\bf memcached} to Beaker + MongoDB required a 2 line config file change:
+	\lstinputlisting{code/mongo_beaker_deploy.diff}
+	\item Lots of useful options in MongoDB Beaker.
+	\item A few limitations on the beaker side which need changes in Beaker (manipulable cache data).
+	\item Patch incubating for better replica, shard and master/slave support.
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Open Source Code}
+    \framesubtitle{MongoKit-Pylons: Pylons patches for Python MongORM}
+	\item Added support to MongoKit to run within a Pylons environment (threadlocal setup of connection pool)
+	\item Adding a globally available thread safe connection pool to Pylon was simple. Add 2 lines to config/environment.py:
+    \lstinputlisting{code/environment.py}
+    \newpage
+	\item Added a few other features to simplify SQLAlchemy migration
+	    \begin{itemize}
+    	\item {\em setattr} / {\em getattr} support to allow {\bf mongoDoc.{\em field}} instead of the dict interface ({\bf mongoDoc['{\em field}']})
+    	\item DB Authentication
+    	\item A few missing corners such as additional datatypes, enhanced index definitions on-document, group statement shortcuts, etc.
+    	\item Integrated support for autoreferences (which was/are mostly a {\em very} bad idea)
+        \end{itemize}
+	\item Changes merged into MongoKit Trunk (MongoKit has stellar unit test coverage)
+\end{itemizecodeframe}
+
+
+\subsection[Why MongoDB?]{Why MongoDB?}
+
+\begin{itemizeframe}
+    \frametitle{Why MongoDB?}
+	\item Dynamic Querying
+	\item Flexibility (embedded documents, atomic updates, query operators and server-side javascript.)
+	\item CouchDB's approach appeared obtuse and rather unPythonic (not an indictment of CouchDB, simply reflective of my knowledge \& opinion at the time)
+	\item Tools like MongoKit allowed for easy replacement of existing MySQL ORM code with something almost identical
+	\item {\em FAST}
+	\item Great Support \& Community Available.
+	    \begin{itemize}
+	        \item Core developers/founders have serious experience in real scalability, and are active in community.
+        	\item MongoDB Mailing List
+        	\item IRC: freenode.net \#mongodb
+    	\end{itemize}
+	% \item Easy access - talking to developers\ldots {\em NOT} support staff. One official development company behind MongoDB.
+\end{itemizeframe}
+
+\section{Show Me The Code!}
+\subsection[The Old: MySQL Snippets]{The Old: MySQL Snippets}
+
+\begin{codeframe}
+    \frametitle{MySQL Schema Snippets}
+    \framesubtitle{The Admin Table...}
+    \lstinputlisting[language=SQL]{code/admin_users.sql}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{MySQL Schema Snippets}
+    \framesubtitle{The News Table...}
+    \lstinputlisting[language=SQL]{code/news.sql}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{SQLAlchemy Model}
+    \framesubtitle{The Admin Object}
+    \lstinputlisting{code/sqlalchemy_model_admin.py}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{SQLAlchemy Model}
+    \framesubtitle{The News Object}
+    \lstinputlisting{code/sqlalchemy_model_news.py}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{SQLAlchemy Model}
+    \framesubtitle{Paypal: OH THE HORROR}
+    \lstinputlisting{code/sqlalchemy_model_paypal.py}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{MongoKit Model}
+    \framesubtitle{Admin}
+    \lstinputlisting{code/mongokit_admin.py}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{MongoKit Model}
+    \framesubtitle{News}
+    \lstinputlisting{code/mongokit_news.py}
+\end{codeframe}
+
+\begin{frame}
+    \frametitle{MongoKit Model}
+    \framesubtitle{PayPal: OH THE\dots that's not so bad.}
+
+\end{frame}
+
+\begin{codeframe}
+    \frametitle{MongoKit Model}
+    \framesubtitle{PayPal: ``Instead of using the ORM\ldots''}
+    \lstinputlisting{code/mongokit_paypal.py}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{MySQL -> Mongo Migration}
+    \framesubtitle{Admin Migration}
+    \lstinputlisting{code/migrate_admin.py}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{MySQL -> Mongo Migration}
+    \framesubtitle{News Migration}
+    \lstinputlisting{code/migrate_news.py}
+\end{codeframe}
+
+
+\begin{itemizecodeframe}
+    \frametitle{Looking for news}
+    \framesubtitle{In Mongo\dots}
+    \item Before, with MySQL/SQLAlchemy:
+        \lstinputlisting{code/find_news_sqlalchemy.py}
+    \item After, with MongoKit:
+        \lstinputlisting{code/find_news.py}
+\end{itemizecodeframe}
+
+
+\section{Final Items}
+
+% \begin{frame}
+% \frametitle{MongoKit}
+% \framesubtitle{Upcoming Features}
+% \begin{itemize}
+%   \item update validation. This feature would allow to validate the update query in order to match the structure. I have to think carefully about it to not miss something. 
+%   \item migrate to the new gridfs implementation (won't break the API). 
+%   \item locked field support : field that cannot be changed once set. This is usefull for slug fields or \_id. 
+%   \item fixtures support : ability to generate on the fly documents which values match the structure. 
+%   \item rdf support : like the ``to\_json'' method but generate a valid rdf document. 
+% \end{itemize}
+% \end{frame}
+
+\begin{itemizeframe}
+    \frametitle{Questions?}
+    \framesubtitle{Contact Info}
+    \item Contact Me
+    \begin{itemize}
+        \item twitter: {\bf @rit}
+        \item email: {\bf bwmcadams@gmail.com}	
+		\item bitbucket: \url{http://hg.evilmonkeylabs.net} (For MongoKit \& Beaker code)
+		\item github: \url{http://github.com/bwmcadams} (Where most of my newer code lives)
+    \end{itemize}
+    \item Pressing Questions?
+    \begin{itemize}
+        \item IRC - {freenode.net \bf\#mongodb}
+        \item MongoDB Users List - \url{http://groups.google.com/group/mongodb-user}
+    \end{itemize}
+\item Mongo Python Language Center - \url{http://api.mongodb.org/python/index.html} {(\tiny Tutorial, API Docs and links to third party toolkits)}
+\end{itemizeframe}
+
+
+
+
+\end{document}

@@ -1,0 +1,4 @@
+- beaker.session.type = libmemcached
+- beaker.session.url = 127.0.0.1:11211
++ beaker.session.type = mongodb
++ beaker.session.url = mongodb://localhost:27017/emergencyPants#sessions

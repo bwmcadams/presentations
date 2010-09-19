@@ -1,0 +1,11 @@
+\frametitle {MongoKit Model}
+    \framesubtitle{News}
+    \lstinputlisting{code/mongokit_news.py}
+\end{codeframe}
+
+\begin{frame}
+    \frametitle{MongoKit Model}
+    \framesubtitle{PayPal: OH THE\dots that's not so bad.}
+    \begin{lstlisting}
+    # No model for PayPal data...
+    \end{lstlisting}
