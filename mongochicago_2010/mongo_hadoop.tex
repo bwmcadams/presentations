@@ -1,0 +1,300 @@
+\documentclass{beamer}
+
+% Copyright 2010 by Brendan W. McAdams <bwmcadams@gmail.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+
+\mode<presentation>
+{
+  %\usetheme{Dresden}      
+  \usetheme{Boadilla}      
+  %\usecolortheme{wolverine}
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\hypersetup{backref,  
+pdfpagemode=FullScreen,  
+colorlinks=false}
+
+ % "define" Scala
+\lstdefinelanguage{Scala}{
+   morekeywords={abstract,case,catch,class,def,%
+     do,else,extends,false,final,finally,%
+     for,forSome,if,implicit,import,lazy,%
+     match,mixin,%
+     new,null,object,override,package,%
+     private,protected,requires,return,sealed,%
+     super,this,throw,trait,true,try,%
+     type,val,var,while,with,yield},
+   otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+   sensitive=true,
+   morecomment=[l]{//},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   morestring=[b]',
+   morestring=[b]"""
+ }
+
+
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break}
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% Default settings for code listings
+\lstset{
+  frame=tb,%
+  language=Python,%
+  aboveskip=1.5mm,%
+  belowskip=1.5mm,%
+  xleftmargin=1mm,%
+  xrightmargin=1mm,%
+  showstringspaces=false,%
+  keepspaces=true,%
+  columns=[c]fixed,%
+  basicstyle={\tiny\ttfamily},%
+  escapechar=¤,%
+  numbers=none,%
+  numberstyle=\tiny\color{yellow},%
+  keywordstyle=\color{blue},%
+  commentstyle=\color{dkgreen},%
+  stringstyle=\color{mauve},%
+  frame=single,%
+  breaklines=true,%
+  breakatwhitespace=true,%
+  tabsize=4,%
+  firstnumber=0,%
+  numbersep=1.5mm,%
+  numberstyle=\tiny%
+}
+
+% \lstdefinestyle{floating}{%
+%     xleftmargin=10pt,%
+%     xrightmargin=5pt,%
+%     aboveskip=4mm,%
+%     belowskip=4mm,%
+%     fontadjust=true,%
+%     columns=[c]flexible,%
+%     keepspaces=true,%
+%     basewidth={0.5em, 0.425em},%
+%     tabsize=2,%
+%     basicstyle=\renewcommand{\baselinestretch}{0.95}\ttfamily,%
+%     commentstyle=\rm,%
+%     keywordstyle=\bfseries,%
+%     mathescape=true,%
+%     captionpos=b,%
+%     framerule=0.3pt,%
+%     firstnumber=0,%
+%     numbersep=1.5mm,%
+%     numberstyle=\tiny,%
+%     float=tbp,%
+%     frame=tblr,%
+%     framesep=5pt,%
+%     framexleftmargin=3pt,%
+%     abovecaptionskip=\smallskipamount,%
+%     belowcaptionskip=\smallskipamount,%
+% } % to define: caption, label
+
+\newcommand{\code}[1]{%
+    \lstinline[%keywordstyle=,%
+               flexiblecolumns=true,%
+               basicstyle=\ttfamily]£#1£}
+
+\newenvironment{itemizeframe}
+               {\begin{frame}\startitemizeframe} 
+               {\stopitemizeframe\end{frame}}
+              
+\newenvironment{codeframe}
+                {\begin{frame}[allowframebreaks,allowdisplaybreaks]}
+                {\end{frame}}
+                
+\newenvironment{itemizecodeframe}
+              {\begin{frame}[allowframebreaks,allowdisplaybreaks]
+              \startitemizeframe} 
+              {\stopitemizeframe\end{frame}}
+
+\newcommand\startitemizeframe{\begin{itemize}} \newcommand\stopitemizeframe{\end{itemize}}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title{The Elephant In the Room: MongoDB + Hadoop} % (optional, use only with long paper titles)
+
+\institute[10gen]{10gen, Inc.}
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[B.W. McAdams]{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\date{Mongo Chicago Conference - October 2010}
+
+\subject{MongoDB + Hadoop}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+%\logo{\includegraphics[width=3.75cm]{sluggy-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+% \AtBeginSubsection[]
+% {
+%   \begin{frame}<beamer>
+%   \frametitle{Outline}
+%     \tableofcontents[currentsection,currentsubsection,currentsubsubsection]
+%   \end{frame}
+% }
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Outline}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\section{Introduction}
+
+\subsection[Mongo + Hadoop]{Why Integrate?}
+\begin{itemizeframe}
+    \frametitle{Hadoop Explained\ldots}
+	\item Started in February 2006 as part of the Apache Lucene project
+	\item Based upon Google's MapReduce and GFS Papers
+	\item Allows distributed, scalable data processing of huge datasets
+	\item Java based, but with support for other JVM and Non-JVM Languages
+	\item Lots of ecosystem tools to simplify interaction such as Pig and Hive
+	\item In use at New York Times, Last.fm, Yahoo!, Amazon, Facebook and {\em many more companies\ldots}
+	\item Great tools for temporary Hadoop clusters such as the Cloudera Cluster Tools, Apache Whirr and Amazon's Elastic MapReduce.
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Why Integrate MongoDB?}
+	\item Easiest Answer: People keep asking for it \ldots
+	\item Limitations in MongoDB's built in MapReduce
+    \begin{itemize}
+        \item<2-> Language: JavaScript only; not everyone wants to write JavaScript for data processing.
+        \item<3-> Concurrency: Current JS Implementation is limited to one JS execution per server at a time.
+        \item<4-> Scalability: Not a lot of ability to scale MongoDB's MapReduce except in cases of sharding.
+    \end{itemize}
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Mongo + Hadoop \ldots}
+    \item Integrating MongoDB and Hadoop to read \& write data from/to MongoDB via Hadoop
+    \item 10gen has been working on a plugin to integrate the two systems, written in Pure Java
+    \item About 6 months ago I explored the idea in Scala with a project called `Luau'
+    \item Support for pure MapReduce as well as Pig (Currently output only - input coming soon)
+    \item With Hadoop Streaming (soon), write your MapReduce in Python or Ruby
+\end{itemizeframe}
+
+\subsection[The Code\ldots Revealed]{MongoDB + MapReduce in Java}
+% \begin{codeframe}
+%     \frametitle{Input Data}
+%     \lstinputlisting[language=JavaScript]{code/wordCountIn.js}
+% \end{codeframe}
+\begin{codeframe}
+    \frametitle{MongoDB + MapReduce in Java}
+    \lstinputlisting{code/WordCount.java}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{The Results}
+    \lstinputlisting[language=JavaScript]{code/wordCountOut.js}
+\end{codeframe}
+
+\subsection[The Code\ldots Revealed]{Using Pig for High Level Data Analysis}
+\begin{codeframe}
+    \frametitle{Sample Input Data}
+    \lstinputlisting{code/sampleData.log}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{The Pig Script}
+    \lstinputlisting{code/test.pig}
+\end{codeframe}
+
+\begin{codeframe}
+    \frametitle{The Output}
+    \lstinputlisting{code/pigTestOut.js}
+\end{codeframe}
+
+\begin{itemizeframe}
+    \frametitle{Questions?}
+    \framesubtitle{Contact Info}
+    \item Contact Me
+    \begin{itemize}
+        \item twitter: {\bf @rit}
+        \item email: {\bf brendan@10gen.com}	
+		\item mongo-hadoop \ldots Available Soon in Alpha Form: \url{http://github.com/mongodb/mongo-hadoop}
+    \end{itemize}
+    \item Pressing Questions?
+    \begin{itemize}
+        \item IRC - {freenode.net \bf\#mongodb}
+        \item MongoDB Users List - \url{http://groups.google.com/group/mongodb-user}
+    \end{itemize}
+\end{itemizeframe}
+
+
+
+
+\end{document}
