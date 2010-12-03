@@ -18,3 +18,5 @@ def query(id: ObjectId)(implicit conn: Mongo, coll: DBCollection) = {
   conn.slaveOk()
   coll.findOne(id)
 }
+// Scala prints this for the above method in console:
+/* query: (id: ObjectId)(implicit conn: Mongo,implicit coll: DBCollection)DBObject */
