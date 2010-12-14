@@ -1,0 +1,392 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+
+% Copyright 2010 by Brendan W. McAdams <brendan@10gen.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+
+\mode<presentation>
+{
+  % \usetheme{Dresden}      
+  \usetheme{Madrid}
+  \setbeamercolor{structure}{fg=OliveGreen!125!black} 
+        
+  % \usecolortheme{dolphin}
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\hypersetup{backref,  
+pdfpagemode=FullScreen,  
+colorlinks=false}
+
+ % "define" Scala
+\lstdefinelanguage{Scala}{
+   morekeywords={abstract,case,catch,class,def,%
+     do,else,extends,false,final,finally,%
+     for,forSome,if,implicit,import,lazy,%
+     match,mixin,%
+     new,null,object,override,package,%
+     private,protected,requires,return,sealed,%
+     super,this,throw,trait,true,try,%
+     type,val,var,while,with,yield},
+   otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+   sensitive=true,
+   morecomment=[l]{//},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   morestring=[b]',
+   morestring=[b]"""
+ }
+
+
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break}
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% Default settings for code listings
+\lstset{
+  frame=tb,%
+  language=Scala,%
+  aboveskip=1.5mm,%
+  belowskip=3.5mm,%
+  xleftmargin=1mm,%
+  xrightmargin=2.5mm,%
+  showstringspaces=false,%
+  keepspaces=true,%
+  columns=[c]fixed,%
+  basicstyle={\scriptsize\ttfamily},%
+  escapechar=¤,%
+  numbers=none,%
+  numberstyle=\tiny\color{yellow},%
+  keywordstyle=\color{blue},%
+  commentstyle=\color{dkgreen},%
+  stringstyle=\color{mauve},%
+  frame=single,%
+  breaklines=true,%
+  breakatwhitespace=true,%
+  tabsize=4,%
+  firstnumber=0,%
+  numbersep=1.5mm,%
+  numberstyle=\tiny,
+  title=\lstname%
+}
+
+\newcommand{\code}[1]{%
+    \lstinline[%keywordstyle=,%
+               flexiblecolumns=true,%
+               basicstyle=\ttfamily]_#1_}
+
+\newenvironment{itemizeframe}
+               {\begin{frame}\startitemizeframe} 
+               {\stopitemizeframe\end{frame}}
+              
+\newenvironment{codeframe}
+                {\begin{frame}[allowframebreaks,allowdisplaybreaks]}
+                {\end{frame}}
+                
+\newenvironment{itemizecodeframe}
+              {\begin{frame}[allowframebreaks,allowdisplaybreaks]
+              \startitemizeframe} 
+              {\stopitemizeframe\end{frame}}
+
+\newcommand\startitemizeframe{\begin{itemize}} \newcommand\stopitemizeframe{\end{itemize}}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title{Migrating from Casbah 1.x -> 2.0} % (optional, use only with long paper titles)
+
+\institute[10gen, Inc.]{10gen, Inc.}
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[B.W. McAdams]{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\date{Dec 14, 2010}
+
+\subject{Migrating from Casbah 1.x -> 2.0}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+\logo{\includegraphics[width=2.25cm]{images/mongodb-logo}}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+% \beamerdefaultoverlayspecification{<+->}
+ 
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+  \frametitle{Outline}
+  \tableofcontents[currentsection,currentsubsection,currentsubsubsection]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \begin{center}
+  \includegraphics[scale=0.25]{images/powered_mongo.png}
+  \end{center}
+\end{frame}
+
+\section{Introduction}
+
+\begin{itemizeframe}
+    \frametitle{Casbah 2.0}
+    \framesubtitle{What Changed?}
+    \item<+-> Now a 10gen supported driver
+        \begin{itemize}
+            {\scriptsize 
+            \item Package Change: now `com.mongodb.casbah'
+            }
+        \end{itemize}
+    \item<+-> Sanity Cleanups and Improvements
+        \begin{itemize}
+            {\scriptsize 
+            \item Modularized: Decouples some dependencies, pick and choose needed components
+            \item Removed `configgy', replaced with a bare minimum `slf4j' implementation for logging
+            \item Type conversions now always loaded when Commons is imported, rather than on Connection creation
+            \item Removal of `global' implicit Tuple/Product -> DBObject Conversions
+            \item Added Scala 2.8 Collections-style DBList implementation, `MongoDBList'
+            }
+        \end{itemize}
+    \item<+-> Updated to Java Driver 2.3/2.4 w/ full API compatibility
+        \begin{itemize}
+            {\scriptsize 
+            
+            \item Introduced Write Concern functionality including execute-around safe mode   
+            }         
+        \end{itemize}
+    \item<+-> Significantly improved Query DSL, including support for all operators
+        \begin{itemize}
+            {\scriptsize 
+            
+            \item Introduced Type Class Context Boundaries for DSL to allow user implementation of custom types while still maintaining type safety
+            \item Operators now return DBObject instead of Tuples
+            }
+        \end{itemize}
+\end{itemizeframe}
+
+\section{The Details}
+
+\subsection{Modularization and Packaging}
+
+\begin{frame}
+    \frametitle{New Packaging}
+    As part of the move to a 10gen supported package, Casbah's package has changed. The now defunct (it was rolled into 2.0) 1.1 branch was changing the package as well, and rolled forward.
+    {\scriptsize
+    \begin{table}[h]
+        \caption{Casbah Packaging}
+        \centering
+        \begin{tabular}{c c c}
+            \hline\hline
+            Casbah 1.0.x & Casbah 1.1.x & Casbah 2.0+ \\ [0.5ex]
+            \hline
+            com.novus.casbah.mongodb & com.novus.casbah & com.mongodb.casbah \\ 
+            \hline
+        \end{tabular}
+        \label{table:packaging}
+    \end{table}
+    }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Modularization}
+    Some users (such as those using a framework like Lift which already provides MongoDB wrappers) wanted access to certain parts of Casbah (e.g. MongoDBObject \& MongoDBList) without importing the whole system. As a result, Casbah has been broken out into several modules which make it easier to pick and choose the features you want.
+\end{frame}
+
+\begin{itemizeframe}
+    \frametitle{Casbah Modules}
+    \framesubtitle{Commons (casbah-commons)}
+    \item Module: `casbah-commons' ("Commons") Package: com.mongodb.casbah.commons
+        \begin{itemize}
+            \item Dependent upon mongo-java-driver, scalaj-collection, scalaj-time, JodaTime, slf4j-api
+            \item Provides core Scala bindings via the Conversions API (now autoloaded when Commons is imported) for converting to and from common Scala and Java types transparently
+            \item Provides Scala 2.8 Collections compatible wrappers for `DBObject' and `DBList' as `MongoDBObject' and `MongoDBList' respectively
+        \end{itemize}
+    \item Raw import of just Commons via: \\
+        \code{import com.mongodb.casbah.commons.Imports.\_}
+\end{itemizeframe}
+
+
+\begin{itemizeframe}
+    \frametitle{Casbah Modules}
+    \framesubtitle{Query DSL (casbah-query)}
+    \item Module: `casbah-query' ("Query DSL") Package: com.mongodb.casbah.query
+        \begin{itemize}
+            \item Dependent upon casbah-commons along with any transitive dependencies
+            \item Provides the Scala syntax DSL mode for creating MongoDB query objects via `\$ Operators', e.g.:\\
+                \code{"foo" \$lt 50 \$gte 12}
+            \item Using this gives you only type conversions, DBObject and DBList wrappers and the DSL.
+        \end{itemize}
+    \item Raw import of just Query DSL (provides Commons automatically) via: \\
+        \code{import com.mongodb.casbah.query.Imports.\_}
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Casbah Modules}
+    \framesubtitle{Core (casbah-core)}
+    \item Module: `casbah-core' ("Core") Package: com.mongodb.casbah.core
+        \begin{itemize}
+            \item Dependent upon casbah-commons and casbah-query along with their dependencies transitively
+            \item Provides  Scala bindings to the Java driver for actually communicating with MongoDB e.g. `DB' and `DBCollection' and MapReduce jobs, wraps the Mongo wire format with Scala type support.
+            \item Importing Core will give you identical functionality to 1.x
+        \end{itemize}
+    \item Raw import of Core (provides Commons and QueryDSL automatically) via: \\
+        \code{import com.mongodb.casbah.Imports.\_}
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{Casbah Modules}
+    \framesubtitle{GridFS (casbah-gridfs)}
+    \item Module: `casbah-gridfs' ("GridFS") Package: com.mongodb.casbah.gridfs
+        \begin{itemize}
+            \item Dependent upon casbah-core and casbah-commons along with their dependencies transitively
+            \item Provides Scala enhanced wrappers to MongoDB's GridFS filesystem.
+            \item NOT imported by default, as many people don't use or need it.  You need to explicitly import this if you want GridFS support.
+        \end{itemize}
+    \item Raw import of GridFS via: \\
+        \code{import com.mongodb.casbah.gridfs.Imports.\_}
+\end{itemizeframe}
+
+\subsection{Sanity Improvements}
+\begin{codeframe}
+    \frametitle{Removal of global Product/Tuple Conversions}
+    Previously, it was possible with Casbah to cast Tuples to DBObject:\\
+
+    \code{val x: DBObject = ("foo" -> "bar", "x" -> 5, "y" -> 238.1)}
+    \\
+    This feature was provided by implicit conversions which attempt to target Product which is the base class of all Tuples. Buggy \& unreliable: often targeted the wrong things for conversion (Such as instances of Option[\_]). As Casbah 2.0 includes wrappers for DBObject which follow Scala 2.8's Collection interfaces including builders and constructors, replaced these conversions. Previous syntax is possible by passing the Tuple pairs to MongoDBObject.apply:\\
+    \lstinputlisting{code/tuple2.scala}
+    \pagebreak
+    We also provide a builder pattern which follows Scala 2.8's Map Builder:\\
+    \lstinputlisting{code/tuple3.scala}
+    \pagebreak
+    Finally, any Scala map can still be cast to a DBObject without issue:\\
+    \lstinputlisting{code/tuple4.scala}
+    \pagebreak
+    It is still possible to use Tuples in the Query DSL however, as there is less need for broad implicit conversions to accomplish that functionality.
+\end{codeframe}
+
+\subsection{Java Driver Updates}
+
+\begin{itemizeframe}
+    \frametitle{Various Improvements to Java Driver Support on Core}
+    \item Brought Casbah's Core API in line with Java Driver 2.3
+    \item Support for \code{MongoURI}, \code{MongoOptions}, \code{slaveOK} \& \code{WriteConcern}
+    \item Support for Replica Sets
+    \item Expanded many methods which previously took DBObject to take a View Boundary e.g.:\\
+            \code{def foo[A <\% DBObject](arg: A) = \{ /* .. */ \} }
+\end{itemizeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Write Concern}
+    \item Write Concern allows users to specify at a Connection, DB, Collection or individual write level what the behavior should be with regards to \code{w}, \code{wtimeout}, and \code{fsync}
+        \begin{itemize}
+            \item \code{w}: \# of servers MongoDB must replicate the write to before returning 'OK'.  Default behavior is \code{0}, \code{1} waits for write and raises any errors as exceptions.  Setting it to \code{-1} ignores even network errors.
+            \item \code{wtimeout}: \# of milliseconds to wait for the write to complete. Default behavior is \code{0}---wait forever.
+            \item \code{fsync}: When \code{true}, forces MongoDB to sync the write to disk before returning.  Use with caution! Defaults to \code{false}.
+        \end{itemize}
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Write Concern}
+    \framesubtitle{Constants}
+    \item Casbah includes a Scala convenience wrapper in \code{com.mongodb.casbah.WriteConcern}, along with common values as predefs
+        \begin{itemize}
+            \item \code{WriteConcern.Normal}: Default behavior, raises exceptions for Network errors but not server errors.
+            \item \code{WriteConcern.Safe}: Exceptions are raised for network issues and server errors, Casbah blocks and waits for the write to complete (equiv. to calling \code{getLastError})
+            \item \code{Writeconcern.ReplicasSafe}: Exceptions are raised for network issues and server errors, Casbah blocks and waits for the write to complete on {\em at least} 2 servers in the replica set.
+            \item \code{WriteConcern.FsyncSafe} Exceptions are raised for network issues and server errors, Casbah blocks and waits for the write to be flushed to disk.
+        \end{itemize}
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{\code{request} mode}
+    \item In the case where you want a single write to block for safety, there is \code{request} mode available on DB and Collection
+    \item `Execute Around' pattern takes a function argument, calls \code{requestStart} and \code{requestDone} then invokes \code{getLastError.throwOnError} which throws an exception if errors occurred.  Your function is handed a copy of the DB or Collection at invocation.
+    \item Example:\\
+    \lstinputlisting{code/request.scala}
+\end{itemizecodeframe}
+
+\subsection{DSL Improvements}
+
+
+\begin{itemizecodeframe}
+    \frametitle{Query DSL Improvements}
+    \framesubtitle{New Operators}
+    \item Added support for all currently supported operators. A list of some of the new operators added in 2.0 include:
+        \begin{itemize}
+            \item             \$slice
+            \item             \$or
+            \item             \$not
+            \item             \$each (special operator only supported nested inside `\$addToSet)
+            \item             \$type (Uses type arguments and class manifests to allow a nice fluid Scala syntax)
+            \item             \$elemMatch
+            \item             Array Operators
+            \item All GeoSpatial Operators including \$near and \$within
+        \end{itemize}
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Query DSL Improvements}
+    \framesubtitle{Type Boundaries}
+    \item Pushing harder on type safety for the DSL to prevent errors
+    \item Type Safety is good but sometimes users introduce their own types
+    \item Using Context Bounds w/ Type Classes to expand on this.
+    \item Most operators now take a Type Class such as \code{ValidDateOrNumericType}:
+        \lstinputlisting{code/neTypeClassDemo.scala}
+    \pagebreak
+    \item Type Classes are easily expanded, if you try to pass a non-working type.
+        \lstinputlisting{code/newTypeClass.scala}
+    
+    \item Please let me know if I missed any boundaries on specific operators (e.g. I think I forgot to add Boolean support in a few places it should be, although \$ne isn't one of them)
+\end{itemizecodeframe}
+\end{document}
