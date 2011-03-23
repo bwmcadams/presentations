@@ -1,0 +1,421 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+
+% Copyright 2010, 2011 by Brendan W. McAdams <brendan@10gen.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+
+\mode<presentation>
+{
+  % \usetheme{Dresden}      
+  \usetheme{Madrid}
+  \setbeamercolor{structure}{fg=OliveGreen!125!black} 
+        
+  % \usecolortheme{dolphin}
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\hypersetup{backref,  
+pdfpagemode=FullScreen,  
+colorlinks=false}
+
+ % "define" Scala
+\lstdefinelanguage{Scala}{
+   morekeywords={abstract,case,catch,class,def,%
+     do,else,extends,false,final,finally,%
+     for,forSome,if,implicit,import,lazy,%
+     match,mixin,%
+     new,null,object,override,package,%
+     private,protected,requires,return,sealed,%
+     super,this,throw,trait,true,try,%
+     type,val,var,while,with,yield},
+   otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+   sensitive=true,
+   morecomment=[l]{//},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   morestring=[b]',
+   morestring=[b]"""
+ }
+
+
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break}
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% Default settings for code listings
+\lstset{
+  frame=tb,%
+  language=JavaScript,%
+  aboveskip=1.5mm,%
+  belowskip=3.5mm,%
+  xleftmargin=1mm,%
+  xrightmargin=2.5mm,%
+  showstringspaces=false,%
+  keepspaces=true,%
+  columns=[c]fixed,%
+  basicstyle={\scriptsize\ttfamily},%
+  escapechar=¤,%
+  numbers=none,%
+  numberstyle=\tiny\color{yellow},%
+  keywordstyle=\color{blue},%
+  commentstyle=\color{dkgreen},%
+  stringstyle=\color{mauve},%
+  frame=single,%
+  breaklines=true,%
+  breakatwhitespace=true,%
+  tabsize=4,%
+  firstnumber=0,%
+  numbersep=1.5mm,%
+  numberstyle=\tiny,
+%  title=\lstname%
+}
+
+\newcommand{\code}[1]{%
+    \lstinline[%keywordstyle=,%
+               flexiblecolumns=true,%
+               basicstyle=\ttfamily]_#1_}
+
+\newenvironment{itemizeframe}
+               {\begin{frame}\startitemizeframe} 
+               {\stopitemizeframe\end{frame}}
+              
+\newenvironment{codeframe}
+                {\begin{frame}[allowframebreaks,allowdisplaybreaks]}
+                {\end{frame}}
+                
+\newenvironment{itemizecodeframe}
+              {\begin{frame}[allowframebreaks,allowdisplaybreaks]
+              \startitemizeframe} 
+              {\stopitemizeframe\end{frame}}
+
+\newcommand\startitemizeframe{\begin{itemize}} \newcommand\stopitemizeframe{\end{itemize}}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title{Understanding MongoDB} % (optional, use only with long paper titles)
+
+\institute[10gen, Inc.]{10gen, Inc.}
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[B.W. McAdams]{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\date{Mar. 23, 2011 @ PGEast}
+
+\subject{Understanding MongoDB}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+\logo{\includegraphics[width=2.25cm]{images/mongodb-logo}}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+% 
+% \AtBeginSubsection[]
+% {
+%   \begin{frame}<beamer>
+%   \frametitle{Outline}
+%     \tableofcontents[currentsection,currentsubsection,currentsubsubsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \begin{center}
+  \includegraphics[scale=0.25]{images/powered_mongo.png}
+  \end{center}
+\end{frame}
+\section{Introduction to MongoDB}
+
+\subsection{What is MongoDB?}
+
+\begin{itemizecodeframe}
+    \frametitle{What Is MongoDB?}
+    
+    \item ``Document-Oriented'' Database, with feature of both Key-Value Stores \& RDBMS'
+        \begin{itemize}
+            \item Rich Query Interface
+            \item Works with JSON-like documents
+            \item Favors embedding data over ``foreign key'' relationships
+        \end{itemize}
+    \pagebreak
+    \item Open Source \& Free: Server is licensed under A-GPL, Official language drivers under Apache 2
+    \item Focused on native APIs for MongoDB interaction to adapt to the host language's native idioms (rather than vice versa) 
+        \begin{itemize}
+            \item Official Drivers for\ldots C, C\#, C++, Java, JavaScript, Perl, PHP, Python, Ruby, Scala, Haskell, Erlang 
+            \item Community Supported drivers for\ldots Clojure, F\#, Go, Haskell, Lua, Objective C, Smalltalk and more\ldots
+        \end{itemize}
+    \pagebreak
+    \item Cursor-based query results
+    \item ServerSide JavaScript 
+        \begin{itemize}
+            \item Stored JavaScript functions server-side
+            \item Powerful aggregation via Map/Reduce \& Group Commands
+            \item JavaScript statements in queries (No indexes, though)
+        \end{itemize}
+    \item Indexing system much like RDBMS', includes Geospatial support
+    \item Scalable file storage with GridFS
+    \item Data scalability with Replica Sets \& Sharding
+\end{itemizecodeframe}
+
+
+\begin{itemizeframe}
+    \frametitle{But is anyone actually *using* it?!?}
+    \item MongoDB is deployed in production at companies which include\ldots
+    \begin{itemize}
+        \item Foursquare
+        \item Shutterfly
+        \item Bit.ly
+        \item Intuit
+        \item Wordnik
+                \begin{itemize}
+                    \item Over 12 billion documents in MongoDB
+                    \item Multiple nodes with ~3TB per node
+                    \item Handling loads of 2m requests/hour, writing 50k documents/second (at peak)
+                \end{itemize}
+        \item Sourceforge
+        \item Etsy
+        \item The New York Times
+        \item Justin.tv
+        \item Github
+        \item Wordsquared (formerly 'Scrabb.ly' - Scrabble MMO built in 48 hours using MongoDB geospatial indexes to determine tile placement)
+    \end{itemize}
+\end{itemizeframe}
+
+\subsection{A Taste of MongoDB}
+\begin{itemizecodeframe}
+    \frametitle{Core Concepts}
+    \item MongoDB's equivalent to ``tables'' are referred to as ``collections'', which contain ``documents'' (individual pieces of data)
+    \item DBs \& Collections are lazy - they are created when first written to
+    \item MongoDB's wire format/internal representation is {\bf BSON} - Binary JSON
+    \begin{itemize}
+        \item Binary optimized flavor of {\bf JSON}; corrects several shortfalls.
+        \item Binary efficient string encoding ({\bf JSON uses Base64})
+        \item Supports other features such as Regular Expressions, Byte Arrays, DateTimes \& Timestamps and JavaScript code blocks \& functions.
+        \item Implemented in separate packages for official drivers
+        \item Createive Commons Licensed, available at \url{http://bsonspec.org}
+    \end{itemize}
+    \item Java \& Scala drivers ( represents {\bf BSON} objects with a map-like {\bf DBObject}; many dynamic languages (Perl, Python, etc.) use native dictionary objects.
+\end{itemizecodeframe}
+
+
+
+
+\begin{itemizecodeframe}
+\frametitle{The basics of Querying}
+    \item Find a single row with \emph{findOne()}; returns the first document found (by natural order).  
+    \item You can find all documents matching your query with \emph{find()}.  No query means you get the entire collection back.
+    \item Queries are specified as {\bf BSON} documents to match against.
+    \pagebreak
+    \item The \emph{find()} and \emph{findOne()} methods can take an optional second {\bf DBObject} specifying the fields to return.
+    \item If you have an embedded object (for example, an address object) you can retrieve it with dot notation in the fields list (e.g. {\em ``address.city''} retrieves just the city value).
+
+    \item Use {\em limit()}, {\em skip()} and {\em sort()} on result objects ({\bf DBCursor} in Java-driver land) to adjust your results.  These all return a new cursor.
+    \item {\em distinct()} can be used (on {\bf DBCollection} to find all distinct values for a given key; it returns a list of values.
+    \pagebreak
+\lstinputlisting[language=JavaScript]{code/querying.js}
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+\frametitle{Query Operators}
+ \item MongoDB is no mere Key-Value store. There are myriad powerful operators to enhance your MongoDB queries\ldots
+\begin{itemize}{\small
+    \item Conditional Operators: {\bf \$gt} (>), {\bf \$lt} (<), {\bf \$gte (>=)},  {\bf \$lte (<=)}
+    \item Negative Equality: {\bf \$ne} (!=) 
+    \item Array Operators: {\bf \$in} (SQL ``IN'' clause\ldots takes an array), {\bf \$nin} (Opposite of ``IN''), {\bf \$all} (Requires all values in the array match), {\bf \$size} (Match the size of an array)
+    \item Field Defined: {\bf \$exists} (boolean argument)(Great in a schemaless world)
+    \item Regular Expressions (Language dependent - most drivers support it)
+    \item Pass Arbitrary Javascript with {\bf \$where}, boolean OR with {\bf \$or}
+    \item Negate any operator with {\bf \$not}
+    }
+\end{itemize}
+\item Using a query operator requires nested objects\ldots
+\lstinputlisting[language=JavaScript]{code/queryoperators_sample.js}
+\item No syntactic sugar in Java to make it easier\ldots
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{Insert/Update/Save}
+    \item Objects in MongoDB Collections have an ``\_id'' field, which must be unique.
+    \item Three ways to add/update data in MongoDB\ldots
+        \begin{itemize}
+            \item \texttt{insert()} always attempts to add a new row.  If ``\_id'' is present and contains a value already in the collection, insert fails.
+            \item \texttt{save()} inserts if there is no ``\_id'' field, otherwise it tries to update the document with the specified ``\_id''.
+            \item \texttt{update()} takes a query and the new values to save.  By default it updates only the first document matching the query.
+            \item For \texttt{update()} you can specify two booleans whose default is false: \emph{upsert}, which indicates you wish to create a new document if the query doesn't match,  and \emph{multi}, which allows updating \textbf{all} documents who match the query.
+        
+        \end{itemize}
+    \lstinputlisting[language=JavaScript]{code/mongo_insert.js}
+    \item Atomic Operators !!!!
+\end{itemizecodeframe}
+
+\section{Scalability with MongoDB}
+\section{Cool Features}
+
+\begin{itemizeframe}
+        \frametitle{Cool Features?}
+        \item There are lots of cool features in MongoDB.  We're going to discuss just a few.
+            \begin{itemize}
+                \item MapReduce
+                \item Stored JavaScript 
+                \item GeoSpatial Indexes
+                \item GridFS
+            \end{itemize}
+\end{itemizeframe}
+
+\section{Cool Features}
+
+\subsection{MapReduce}
+\begin{itemizeframe}
+    \frametitle{MongoDB MapReduce}
+    \item MongoDB's Aggregation Functionality
+    \item Write functions in JavaScript
+    \item Reads from {\em one} collection, writes to {\em one} collection.
+    \item Single Threaded per mongod\ldots
+        \begin{itemize} 
+            \item In a single mongod / replica set environment: No parallelization 
+            \item In sharded environments, one map/reduce is run per shard and re-reduced to combine all results (idempotence)
+        \end{itemize}
+\end{itemizeframe}
+\begin{itemizeframe}
+    \frametitle{MongoDB MapReduce}
+    \framesubtitle{Output Behavior}
+    \item Before 1.7.3: MapReduce creates a temporary collection.  Can specify permanent collection via `out'. Contents of `out' are overwritten after job is finished.  Temp collections cleaned up when connection closes.
+    \item Since 1.7.3: Specify `outType` parameter. 
+        \begin{itemize}
+            \item `normal' is current behavior.  
+            \item `merge' merges old collection and new results, clobbering any existing keys.  
+            \item `reduce' runs a reduce operation if both new and old contain the same key.
+        \end{itemize}
+\end{itemizeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{MongoDB MapReduce}
+    \framesubtitle{Running a MapReduce}
+    \item Sample Data: US Treasury Bond historical Bid Curves since January 1990, to calculate an annual average for the 10 year Treasury.
+    \begin{itemize}
+            \item A sample of our dataset:
+            \lstinputlisting{code/sample_treasury.js}
+            \pagebreak
+           \item Job Anatomy (Single Server):
+           \begin{center}
+           \includegraphics[scale=.42]{images/map_reduce.png}
+           \end{center}
+           \pagebreak 
+           \item The MongoDB JavaScript mapReduce:
+           \lstinputlisting{code/mongo_treasury_mr.js}
+           \pagebreak
+           \item Job Output:
+            \lstinputlisting{code/mongo_mr_out.js}
+            \pagebreak
+            \item Read the collection for your results:
+            \lstinputlisting{code/mongo_mr_out_read.js}
+            \item It's possible to specify a query, sort and limit as well, to limit your input.
+    \end{itemize}
+\end{itemizecodeframe}
+
+\subsection{Stored JavaScript Code}
+\begin{itemizecodeframe}
+    \frametitle{MongoDB's Stored JavaScript}
+    \item Each Database has a system collection, `system.js' which can store JavaScript routines
+    \item `\_id' is set to the function name, `value' to the function body.
+    \item Stored Functions are unique per database and can be accessed in scope from any JavaScript (But not the raw JS Shell)
+    \item Useful for commonly used routines in MapReduce
+    \item \lstinputlisting{code/stored_func.js}
+\end{itemizecodeframe}
+
+
+\subsection{GeoSpatial Indexes}
+\begin{itemizecodeframe}
+    \frametitle{GeoSpatial Indexing}
+    \item Search by Geospatial proximity with MongoDB\ldots
+    \item One Geoindex allowed per database
+    \item Index can be created on an array or a subdocument
+    \item You must be consistent across all documents (e.g. same key names or order in array)
+    \item I loaded the publicly available GTFS data for NYC Subways (current as of Feb. 2011)
+    \item Quick \& Dirty Python script to create the index:
+        \lstinputlisting[language=Python]{code/geospatial_idx.py}
+    \item What are the 5 nearest BART or Caltrain stops to our current location (`40.749992, -73.991160')?
+        \lstinputlisting[language=JavaScript]{code/geospatial.js}
+    \item In production use at Foursquare \& Wordsquared (Formerly Scrabb.ly)
+\end{itemizecodeframe}
+\subsection{GridFS}
+
+\begin{itemizecodeframe}
+    \frametitle{GridFS: Scalable MongoDB File Storage}
+    \item Specification for storing large files in MongoDB, supported in all official drivers as reference implementation.
+    \item Works around 4MB BSON limit by breaking files into chunks.
+    \item Two collections: `fs.files' for metadata, `fs.chunks' stores the individual file chunks.
+    \item Sharding: Individual file chunks don't shard but the files themselves will (e.g. File A goes on Server 1, File B goes on Server 2 but no chunks of A will be on 2)
+    \item Experimental modules for Lighttpd and Nginx to serve static files directly from GridFS
+    \item A Unit Test from Casbah (Scala Driver):
+        \lstinputlisting[language=Scala]{code/gridfs_spec.scala}
+    \item See the GridFS Spec\ldots \url{http://www.mongodb.org/display/DOCS/GridFS+Specification}
+\end{itemizecodeframe}
+
+\subsection{Closing}
+\begin{itemizeframe}
+    \frametitle{Questions?}
+        \item Twitter: {\bf @rit} | mongodb: {\bf @mongodb} | 10gen: {\bf @10gen }
+        \item email: {\bf brendan@10gen.com}	
+    
+    \item Pressing Questions?
+    \begin{itemize}
+        \item IRC - {freenode.net \bf\#mongodb}
+        \item MongoDB Users List - \url{http://groups.google.com/group/mongodb-user}
+    \end{itemize}
+    \item { 10gen is {\em hiring!}  We need smart engineers in both NY and Bay Area: \url{http://10gen.com/jobs}}
+\end{itemizeframe}
+
+
+\end{document}
