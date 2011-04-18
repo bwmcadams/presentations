@@ -262,7 +262,7 @@ colorlinks=false}
             \item Empty ... The client's local batch is empty but there appear to be more results on the server
             \item EOF ... The client and server have exhausted their results and nothing more is to be had.
         \end{itemize}
-    \item Solution: Haskell's Iteratee Pattern (also available in scalaz)
+    \item Solution: Haskell's Iteratee Pattern (also available in scalaz).  Suggested by @jdegoes (thanks!)
     \item The three states are represented as an "IterState" and the cursor iteration is controlled by "IterCmd" issued by a user function in response to "IterState".
         \lstinputlisting{code/iteree.scala}
 \end{itemizecodeframe}

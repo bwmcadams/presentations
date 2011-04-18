@@ -236,6 +236,8 @@ colorlinks=false}
 \begin{itemizecodeframe}
     \frametitle{Core Concepts}
     \item MongoDB's equivalent to ``tables'' are referred to as ``collections'', which contain ``documents'' (individual pieces of data)
+    \lstinputlisting[language=JavaScript]{code/documents.js}
+    \pagebreak
     \item DBs \& Collections are lazy - they are created when first written to
     \item MongoDB's wire format/internal representation is {\bf BSON} - Binary JSON
     \begin{itemize}
@@ -296,10 +298,39 @@ colorlinks=false}
         
         \end{itemize}
     \lstinputlisting[language=JavaScript]{code/mongo_insert.js}
-    \item Atomic Operators !!!!
+\end{itemizecodeframe}
+
+\begin{itemizecodeframe}
+        \frametitle{Atomic Operators}
+        \framesubtitle{Atomic Operations for in-place modification without transactions}
+        
+                
+        \item \$set to modify specific fields in a document; \$inc to atomically increment (or decrement) a value
+        \lstinputlisting[language=JavaScript]{code/atomic_set.js}
+
+        \item Array Operations for Atomic Modification (\$push, \$pull, \$addtoSet (treat arrays like a set))
+
+        \lstinputlisting[language=JavaScript]{code/array_atomic.js}
+
 \end{itemizecodeframe}
 
 \section{Scalability with MongoDB}
+
+\begin{itemizeframe}
+\frametitle{Finally, Data Scalability.}
+\item Traditional master-slave replication
+\item Replica Sets (new in 1.6)
+    \begin{itemize}
+        \item Replaces master-slave setup with 1-7 server clusters
+        \item Automatic failover and recovery
+    \end{itemize}
+\item AutoSharding (new in 1.6)
+    \begin{itemize}
+        \item Horizontal scaling - partition your collections \& data across as many nodes as necessary.
+        \item Multiple nodes can service the same shard, allowing for balancing \& failover.
+        \item Map/Reduce runs across multiple shards, allowing concurrency.
+    \end{itemize}
+\end{itemizeframe}
 \section{Cool Features}
 
 \begin{itemizeframe}
@@ -394,7 +425,7 @@ colorlinks=false}
 \begin{itemizecodeframe}
     \frametitle{GridFS: Scalable MongoDB File Storage}
     \item Specification for storing large files in MongoDB, supported in all official drivers as reference implementation.
-    \item Works around 4MB BSON limit by breaking files into chunks.
+    \item Works around BSON document size limits by breaking files into chunks.
     \item Two collections: `fs.files' for metadata, `fs.chunks' stores the individual file chunks.
     \item Sharding: Individual file chunks don't shard but the files themselves will (e.g. File A goes on Server 1, File B goes on Server 2 but no chunks of A will be on 2)
     \item Experimental modules for Lighttpd and Nginx to serve static files directly from GridFS
