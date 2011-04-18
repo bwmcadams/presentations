@@ -1,0 +1,307 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+
+% Copyright 2010, 2011 by Brendan W. McAdams <brendan@10gen.com>
+%
+% You may redistribute the content of this presentation for your own needs 
+% provided you give credit to its author. In other words: "Don't be a dick."
+% % Latex code based upon the "Generic Presentation 15-45 minutes" template from Beamer.
+
+\mode<presentation>
+{
+  % \usetheme{Dresden}      
+  \usetheme{Madrid}
+  \setbeamercolor{structure}{fg=OliveGreen!125!black} 
+        
+  % \usecolortheme{dolphin}
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{ulem}
+
+\hypersetup{backref,  
+pdfpagemode=FullScreen,  
+colorlinks=false}
+
+ % "define" Scala
+\lstdefinelanguage{Scala}{
+   morekeywords={abstract,case,catch,class,def,%
+     do,else,extends,false,final,finally,%
+     for,forSome,if,implicit,import,lazy,%
+     match,mixin,%
+     new,null,object,override,package,%
+     private,protected,requires,return,sealed,%
+     super,this,throw,trait,true,try,%
+     type,val,var,while,with,yield},
+   otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+   sensitive=true,
+   morecomment=[l]{//},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   morestring=[b]',
+   morestring=[b]"""
+ }
+
+
+\lstdefinelanguage{JavaScript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break}
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% Default settings for code listings
+\lstset{
+  frame=tb,%
+  language=Scala,%
+  aboveskip=1.5mm,%
+  belowskip=1.5mm,%
+  xleftmargin=1mm,%
+  xrightmargin=1mm,%
+  showstringspaces=false,%
+  keepspaces=true,%
+  columns=[c]fixed,%
+  basicstyle={\tiny\ttfamily},%
+  escapechar=¤,%
+  numbers=none,%
+  numberstyle=\tiny\color{yellow},%
+  keywordstyle=\color{blue},%
+  commentstyle=\color{dkgreen},%
+  stringstyle=\color{mauve},%
+  frame=single,%
+  breaklines=true,%
+  breakatwhitespace=true,%
+  tabsize=4,%
+  firstnumber=0,%
+  numbersep=1.5mm,%
+  numberstyle=\tiny%
+}
+
+% \lstdefinestyle{floating}{%
+%     xleftmargin=10pt,%
+%     xrightmargin=5pt,%
+%     aboveskip=4mm,%
+%     belowskip=4mm,%
+%     fontadjust=true,%
+%     columns=[c]flexible,%
+%     keepspaces=true,%
+%     basewidth={0.5em, 0.425em},%
+%     tabsize=2,%
+%     basicstyle=\renewcommand{\baselinestretch}{0.95}\ttfamily,%
+%     commentstyle=\rm,%
+%     keywordstyle=\bfseries,%
+%     mathescape=true,%
+%     captionpos=b,%
+%     framerule=0.3pt,%
+%     firstnumber=0,%
+%     numbersep=1.5mm,%
+%     numberstyle=\tiny,%
+%     float=tbp,%
+%     frame=tblr,%
+%     framesep=5pt,%
+%     framexleftmargin=3pt,%
+%     abovecaptionskip=\smallskipamount,%
+%     belowcaptionskip=\smallskipamount,%
+% } % to define: caption, label
+
+\newcommand{\code}[1]{%
+    \lstinline[%keywordstyle=,%
+               flexiblecolumns=true,%
+               basicstyle=\ttfamily]_#1_}
+
+\newenvironment{itemizeframe}
+               {\begin{frame}\startitemizeframe} 
+               {\stopitemizeframe\end{frame}}
+              
+\newenvironment{codeframe}
+                {\begin{frame}[allowframebreaks,allowdisplaybreaks]}
+                {\end{frame}}
+                
+\newenvironment{itemizecodeframe}
+              {\begin{frame}[allowframebreaks,allowdisplaybreaks]
+              \startitemizeframe} 
+              {\stopitemizeframe\end{frame}}
+
+\newcommand\startitemizeframe{\begin{itemize}} \newcommand\stopitemizeframe{\end{itemize}}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title{Hammersmith: Netty, Scala, and MongoDB} % (optional, use only with long paper titles)
+
+\institute[10gen, Inc.]{10gen, Inc.}
+
+%\subtitle
+%{Presentation Subtitle} % (optional)
+
+\author[B.W. McAdams]{Brendan W. McAdams}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\date{NY Scala Enthusiasts}
+
+\subject{Hammersmith}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+\logo{\includegraphics[width=2.25cm]{images/mongodb-logo}}
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+% \AtBeginSubsection[]
+% {
+%   \begin{frame}<beamer>
+%   \frametitle{Outline}
+%     \tableofcontents[currentsection,currentsubsection,currentsubsubsection]
+%   \end{frame}
+% }
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+% \beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Introducing Hammersmith}
+
+\begin{itemizeframe}
+    \frametitle{What is Hammersmith?}
+    \framesubtitle{Overview}
+    \item New MongoDB Driver for Scala 
+    \item Distillation of Lessons Learned in 18 Months of Casbah (Spiritual "cousin" rather than successor)
+    \item Pure Scala (With a little bit of Java at the very bottom for BSON)
+    \item Focused more on \textit{frameworks} than \textit{userspace}
+    \item Purely Asynchronous and Non-Blocking Network I/O
+\end{itemizeframe}
+
+\begin{itemizeframe}
+    \frametitle{What is Hammersmith?}
+    \framesubtitle{What Problems Does It Solve/Explore?}
+    \item Learn BSON and the MongoDB Wire Protocol
+    \item Architectural Evolutions from Java Driver (and Casbah Lessons)
+        \begin{itemize} 
+            \item Better Connection Pools and Cleaner Type tree for Connections (Direct, Replica Set, Master/Slave)
+            \item Faster, cleaner and more extensible pluggability for custom serialization of business objects <-> BSON
+        \end{itemize}
+    \item Asynchronous Networking
+        \begin{itemize}
+            \item Integrate more appropriately with purely asynchronous frameworks like "BlueEyes" \url{https://github.com/jdegoes/blueeyes}
+            \item Get away from any synchronization, threading and blocking which can limit the scalability ceiling of working with MongoDB
+        \end{itemize}
+    \item \sout{World Domination!}
+\end{itemizeframe}
+
+\section{Hammersmith in Code}
+
+\begin{itemizecodeframe}
+    \frametitle{Speaking to MongoDB Asynchronously}
+    \item In an asynchronous framework, we must be careful to never block 
+    \item The problem of course, is how do you manage a truly synchronous operation like talking to a database?
+    \pagebreak
+    \item Anonymous Function Callbacks and Dispatching by Request ID does the trick nicely!
+        \lstinputlisting{code/callback_ops.scala}
+\end{itemizecodeframe}
+
+
+\begin{itemizecodeframe}
+    \frametitle{Speaking to MongoDB Asynchronously}
+    \framesubtitle{Cursors}
+    \item Handling a findOne or command, which return a single Document is not difficult.
+    \item Because of batching, Cursors (Which MongoDB uses where number of matching docs > 1) are difficult to do asynchronously without blocking
+    \item Standard iteration (say, calling "next()") has in essence, two return values:
+        \begin{itemize}
+            \item Some(value) ... A valid value was found in the iterator and returned
+            \item None ... No value was found, this iterator is empty and done
+        \end{itemize}
+    \pagebreak
+    \item A cursor (MongoDB's are much like any other database's) returns documents in batches to save memory on the client.  They really have \textit{three} states:
+        \begin{itemize}
+            \item Entry(value) ... A valid value was found in the *CLIENTS LOCAL BATCH* and returned 
+            \item Empty ... The client's local batch is empty but there appear to be more results on the server
+            \item EOF ... The client and server have exhausted their results and nothing more is to be had.
+        \end{itemize}
+    \item Solution: Haskell's Iteratee Pattern (also available in scalaz)
+    \item The three states are represented as an "IterState" and the cursor iteration is controlled by "IterCmd" issued by a user function in response to "IterState".
+        \lstinputlisting{code/iteree.scala}
+\end{itemizecodeframe}
+
+%\begin{itemizeframe}
+    %\frametitle{Pimpin' Your Library}
+    %\item Implicit methods allow for the the ``Pimp My Library Pattern''
+    %\item Coined by Martin Odersky in a 2006 Blog post.  Similar to C\# extension methods, Ruby modules.
+    %\item Uses implicit conversions to tack on new methods at runtime.
+    %\item Either return a new ``Rich\_'' or anonymous class\ldots
+        %\lstinputlisting{code/pimp_sample1.scala}
+
+%\end{itemizeframe}
+
+\begin{itemizecodeframe}
+    \frametitle{What's Next?}
+    \item Still fleshing out the BSON layer, but focused on being able to plug completely custom Business Objects in at a low level
+    \item Working on Connection Pools (with commons-pool)
+    \item Aiming to Release an Alpha in the next 2-3 weeks
+    \item The goal here is to be partly community driven: Making this fit into the frameworks in a way that benefits the Scala + MongoDB user bases. I want your contributions and thoughts!
+\end{itemizecodeframe}
+
+\subsection{Closing}
+\begin{itemizeframe}
+    \frametitle{Questions?}
+        \item Twitter: {\bf @rit} | mongodb: {\bf @mongodb} | 10gen: {\bf @10gen }
+        \item email: {\bf brendan@10gen.com}	
+    
+    \par
+    \item Upcoming MongoDB Events
+    \begin{itemize}
+        \item Mongo Philly (April 26, 2011) - \url{http://bit.ly/mongophilly}        
+        \item Mongo NY (June 7, 2011) - \url{http://www.10gen.com/conferences/mongonyc2011}
+    \end{itemize}
+    \par
+    \item 10gen is hiring!  We need smart engineers (C++) in both NY and the Bay Area (Redwood Shores): \url{http://10gen.com/jobs}
+
+\end{itemizeframe}
+
+
+
+\end{document}
