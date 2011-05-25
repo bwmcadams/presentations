@@ -1,6 +1,4 @@
-log.debug("[%s] Querying for Collection Names with: %s", name, qMsg)
 connection.send(qMsg, SimpleRequestFutures.find((cursor: Cursor) => {
-  log.debug("Got a result from listing collections: %s", cursor)
   val b = Seq.newBuilder[String]
 
   Cursor.basicIter(cursor) { doc =>
@@ -10,8 +8,6 @@ connection.send(qMsg, SimpleRequestFutures.find((cursor: Cursor) => {
 
   callback(b.result())
 }))
-
-// The function helpers for iteration ...
 
 protected[mongodb] def basicIter(cursor: Cursor)(f: BSONDocument => Unit) = {
   def next(op: Cursor.IterState): Cursor.IterCmd = op match {
@@ -29,8 +25,8 @@ protected[mongodb] def basicIter(cursor: Cursor)(f: BSONDocument => Unit) = {
   iterate(cursor)(next)
 }
 
+
 def iterate(cursor: Cursor)(op: (IterState) => IterCmd) {
-  log.debug("Iterating '%s' with op: '%s'", cursor, op)
   @tailrec def next(f: (IterState) => IterCmd): Unit = op(cursor.next()) match {
     case Done => {
       log.info("Closing Cursor.")
@@ -47,3 +43,12 @@ def iterate(cursor: Cursor)(op: (IterState) => IterCmd) {
   }
   next(op)
 }
+
+def next() = 
+  if (docs.length > 0) // docs is a Queue, each fetched batch is enqueued as docs.enqueue(docs: _*)
+    Cursor.entry(docs.dequeue()) 
+  else if (hasMore) // internal tracking of last batch fetch; mongo indicates if more results or not
+    Cursor.Empty
+  else 
+    Cursor.EOF
+

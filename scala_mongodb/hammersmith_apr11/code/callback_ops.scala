@@ -3,21 +3,25 @@
  * invoked when a reply for that request comes back
  */
 def databaseNames(callback: Seq[String] => Unit) {
-  runCommand("admin", Document("listDatabases" -> 1))(SimpleRequestFutures.command((doc: Document) => {
-    log.debug("Got a result from 'listDatabases' command: %s", doc)
-    if (!doc.isEmpty) {
-      val dbs = doc.as[BSONList]("databases").asList.map(_.asInstanceOf[Document].as[String]("name"))
-      callback(dbs)
-    } else {
-      log.warning("Command 'listDatabases' failed. Doc: %s", doc)
-      callback(List.empty[String])
-    }
-  }))
+  runCommand("admin", Document("listDatabases" -> 1))(SimpleRequestFutures.command(
+    (doc: Document) => {
+      log.debug("Got a result from 'listDatabases' command: %s", doc)
+      if (!doc.isEmpty) {
+        val dbs = {
+          val lst = doc.as[BSONList]("databases").asList
+          lst.map(_.asInstanceOf[Document].as[String]("name"))
+        }
+        callback(dbs)
+      } else {
+        log.warning("Command 'listDatabases' failed. Doc: %s", doc)
+        callback(List.empty[String])
+      }
+    })
+  )
 }
 
 /** 
  * SimpleRequestFutures "swallows" any exceptions, as many times people want to ignore them.
- * For those who want to handle any error by hand, the underlying code uses Either[Throwable, A].
  */
 command(authCmd)(RequestFutures.findOne((result: Either[Throwable, Document]) => {
   result match {
@@ -32,8 +36,8 @@ command(authCmd)(RequestFutures.findOne((result: Either[Throwable, Document]) =>
       }
     case Left(e) =>
       log.error(e, "Authentication Failed.")
-      callback(this)
   }
+  callback(this)
 }))
 
 // A base trait for RequestFutures which handles the application.
@@ -46,21 +50,17 @@ sealed trait RequestFuture {
   def apply[A <% T](result: A) = body(Right(result.asInstanceOf[T]))
 }
 
+
+
 trait CursorQueryRequestFuture extends RequestFuture {
   type T <: Cursor
 }
 
-/**
- *
- * Used for findOne and commands
- * Items which return a single document, and not a cursor
- */
 trait SingleDocQueryRequestFuture extends QueryRequestFuture {
   type T <: BSONDocument
 }
 
-// Finally, the helper methods just provide convenience
-// "Simple" 
+// "Simple" handler
 def command[A <: BSONDocument](f: A => Unit) =
   new SingleDocQueryRequestFuture {
     type T = A
@@ -76,4 +76,3 @@ def command[A <: BSONDocument](f: Either[Throwable, A] => Unit) =
     type T = A
     val body = f
   }
-  
