@@ -1,0 +1,14 @@
+<!doctype html>
+<title>Tech Books Demo from MongoDB</title>
+
+<div class=books>
+    {%- for book in books %}
+    <p>
+        <a href="{{ url_for("view_book", id=book._id) }}"><strong>{{ book.title }}</strong></a>
+        by {%- for author in book.author %}
+            <a href="{{ url_for("view_author", name=author) }}">{{ author }}</a>, 
+        {%- endfor %}
+    </p>
+    {%- endfor %}
+</div>
+

@@ -1,0 +1,40 @@
+<!doctype html>
+<style type="text/css">
+    label {
+        font-weight: bold;
+        padding-right: 5px;
+    }
+</style> 
+
+<title>Tech Book: {{ book.title }}</title>
+<label for="title">Title: </label>
+<span id="title">{{ book.title }}</span>
+<p/>
+
+<label for="authors">Authors: </label>
+<span id="authors">{%- for author in book.author %}
+    <a href="{{ url_for("view_author", name=author) }}">{{ author }}</a>,  
+{%- endfor %}
+</span>
+<p/>
+
+<label for="price">Current Price ({{ book.price.currency }}): </label>
+<span id="price">{{ book.price.discount }}</span>
+<p/>
+
+<label for="publisher">Publisher: </label>
+<span id="publisher">{{ book.publisher }}</span>
+<p/>
+
+
+<label for="isbn">ISBN: </label>
+<span id="isbn">{{ book.isbn }}</span>
+<p/>
+
+<label for="tags">Tags: </label><p/>
+<span id="tags">{%- for tag in book.tags %}
+    <a href="{{ url_for("view_tag", name=tag) }}">{{ tag }}</a><br/> 
+{%- endfor %}
+</span>
+
+
