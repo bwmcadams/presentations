@@ -3,19 +3,20 @@ slidenumbers: true
 theme: RH Presentation
 
 [.background-color: #8F0003]
-[.header: #FFFFFF, Overpass SemiBold, text-scale: .9]
-## Functions as a Service with 
-## Apache OpenWhisk and OpenShift
+[.header: #FFFFFF, Overpass SemiBold, alignment(center), text-scale(1.5)]
+# Functions as a Service with 
+# Apache OpenWhisk and OpenShift
+<br>
 <br>
 <br>
 <br>
 
-#### Brendan McAdams 
-##### bmcadams@redhat.com
+### Brendan McAdams 
+#### bmcadams@redhat.com
 ---
 
-## Functions as a Service 
-### (aka "serverless")
+# Functions as a Service 
+## (aka "serverless")
 
 - Deploy code functions easily - no server setup[^1]
 	- Event Driven - respond to events by invoking functions
@@ -23,7 +24,6 @@ theme: RH Presentation
 	- BYO Programming Language 
 	- Use a hosted platform with AWS Lambda, Red Hat Cloud Functions[^2], etc…
 	- or, be adventurous: build your own OpenWhisk install!
-
 [^1]: Once your serverless platform is running
 
 [^2]: Red Hat's OpenShift based version of OpenWhisk
@@ -32,7 +32,7 @@ theme: RH Presentation
 
 ---
 
-## Introducing Apache OpenWhisk
+# Introducing Apache OpenWhisk
 
 - Fully Open Source, Apache 2 Licensed
 - Functions (Actions) are the centerpiece of your code
@@ -40,8 +40,8 @@ theme: RH Presentation
 
 ---
 
-## Introducing Apache OpenWhisk
-### Functions
+# Introducing Apache OpenWhisk
+## Functions
 
 - Functions can be written in any supported language including Node, Java, and Python
 - Use your functions for cool stuff
@@ -50,7 +50,7 @@ theme: RH Presentation
 
 ---
 
-### OpenWhisk & Red Hat 
+# OpenWhisk & Red Hat 
 
 - Red Hat is working to improve and expand upon Apache OpenWhisk, including the integration of our software portfolio
 - Recently contributed Kubernetes support upstream
@@ -65,7 +65,7 @@ theme: RH Presentation
 ^ Originally was docker only
 
 ---
-### Loading OpenWhisk on OpenShift
+# Loading OpenWhisk on OpenShift
 
 
 - We provide a [template for loading OpenWhisk into OpenShift](https://github.com/projectodd/openwhisk-openshift), which installs and configures all of the components:
@@ -75,7 +75,7 @@ theme: RH Presentation
 	```
 
 ---
-## OpenWhisk Actions
+# OpenWhisk Actions
 
 - An Action is the basic unit of work with OpenWhisk, containing your function
 - Actions are stateless
@@ -86,7 +86,8 @@ theme: RH Presentation
 
 ---
 
-## Sample Action
+# Sample Action
+### `hello.py`
 
 ```python
 
@@ -98,7 +99,8 @@ def main(args):
 
 ---
 
-## Sample Action
+# Sample Action
+### `hello.py`
 
 ```python, [.highlight: 1,2]
 
@@ -110,7 +112,8 @@ def main(args):
 
 ---
 
-## Sample Action
+# Sample Action
+### `hello.py`
 
 ```python, [.highlight: 3,4]
 
@@ -121,7 +124,8 @@ def main(args):
 ```
 
 ---
-## Creating an Action
+# Creating an Action
+### `hello.py`
 
 To create an action, we need to give it a name and configure it in OpenWhisk:
 
@@ -134,7 +138,8 @@ ok: created action helloPy
 ^ Some languages like Python and Java allow packaging of multiple files with an entrypoint
 
 ---
-## Invoking an Action
+# Invoking an Action
+### `hello.py`
 
 Once it has a name, an action can be invoked directly:
 
@@ -148,8 +153,8 @@ $ wsk -i action invoke --result helloPy --param name "Brendan McAdams"
 ^ `--result` tells the `wsk` client to wait for a result, but only show the output not any additional stats etc
 
 ---
-
-### Action Sequences
+# Action Sequences
+### `mungeHello`
 
 Multiple functions can be chained together using _sequences_ where the output of a function is the input to a subsequent function[^*]. 
 
@@ -169,7 +174,8 @@ def main(args):
 
 ---
 
-### Action Sequences
+# Action Sequences
+### `mungeHello`
 
 Our new function just splits the input name into _"Surname, First Name"_:
 
@@ -182,7 +188,8 @@ $ wsk -i action invoke --result alphaName --param name "Brendan McAdams"
 ```
 
 ---
-### Action Sequences
+# Action Sequences
+### `mungeHello`
 
 To create a sequence, the individual actions must already be created. Their names are the keys for the new sequence. With this setup, `alphaName` is called first, with its output being fed to `helloPy`. The response from OpenWhisk is the output of `helloPy`.
 
@@ -192,7 +199,8 @@ ok: created action mungeHello
 ```
 
 ---
-### Action Sequences
+# Action Sequences
+### `mungeHello`
 
 Invoking a sequence is no different than a normal action: just call it by the sequence name:
 
@@ -204,11 +212,11 @@ $ wsk -i action invoke --result mungeHello --param name "Brendan McAdams"
 ```
 
 ---
-## OpenWhisk Triggers & Rules
+# Triggers & Rules
 
 - Triggers are channels for events
 - Triggers can be linked, via _rules_, to one or more actions 
-- Example - A trigger named `uploadPhoto` might, when invoked, call several actions: `nsfwFilter, `generateThumbnail`, and `parseLocation` 
+- Example - A trigger named `uploadPhoto` might, when invoked, call several actions: `nsfwFilter`, `generateThumbnail`, and `parseLocation` 
 	- When the `uploadPhoto` trigger is called, the rule forwards the invocation parameters to each of the 3 linked actions.
 
 
@@ -216,7 +224,7 @@ $ wsk -i action invoke --result mungeHello --param name "Brendan McAdams"
 ^ The trigger is, by itself, really just a name
 
 ---
-## Feeds & Packages
+# Feeds & Packages
 
 - OpenWhisk supports the idea of pre-packaging functionality in a _package_
 - Packages bundle together Actions and Feeds, allowing us to bundle related code to deploy an event driven workflow
@@ -225,8 +233,8 @@ $ wsk -i action invoke --result mungeHello --param name "Brendan McAdams"
 	- Prebuilt packages include support for Alarms, RSS Feeds, Kafka Integration, and more.
 
 ---
-## Feeds & Packages
-### Feeds
+# Feeds & Packages
+## Feeds
 
 - Packages can also provide _feeds_, which configure external event sources.
 - Example: OpenWhisk includes a prebuilt 'alarms' package which can let us create cron-like repeating behaviors.
@@ -243,7 +251,7 @@ wsk trigger create interval \
 
 ---
 [.background-color: #8F0003]
-[.header: #FFFFFF, Overpass SemiBold, text-scale: .9]
+[.header: #FFFFFF, Overpass SemiBold, alignment(center), text-scale(1.5)]
 
 # Questions?
 <br>
